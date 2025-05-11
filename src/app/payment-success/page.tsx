@@ -23,7 +23,7 @@ const PaymentSuccessContent: React.FC = () => {
 
     try {
       const res = await fetch(`/api/checkout_sessions/verify?session_id=${sessionId}`);
-      const data = await res.json();
+      const data: { session: any } = await res.json();
 
       if (!res.ok) {
         throw new Error(data.message || "Could not verify payment.");
