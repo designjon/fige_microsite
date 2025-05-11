@@ -6,8 +6,15 @@ import Stripe from "stripe";
 // Ensure STRIPE_SECRET_KEY is set in your environment variables
 console.log("Loaded Stripe key:", process.env.STRIPE_SECRET_KEY);
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-04-30.basil", // Use the latest API version
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+
+if (!stripeKey) {
+  console.error("❌ Stripe secret key is missing from environment variables.");
+  throw new Error("Stripe secret key not defined");
+}
+
+const stripe = new Stripe(stripeKey, {
+  apiVersion: "2025-04-30.basil",
   typescript: true,
 });
 
