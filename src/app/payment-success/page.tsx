@@ -12,13 +12,34 @@ const PaymentSuccessContent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Simplified version without backend verification for now
+  // Version with backend verification
   useEffect(() => {
+  const fetchSession = async () => {
     if (!sessionId) {
-      setError("Invalid session information.");
+      setError("Missing session ID.");
+      setIsLoading(false);
+      return;
     }
-    setIsLoading(false);
-  }, [sessionId]);
+
+    try {
+      const res = await fetch(`/api/checkout_sessions/verify?session_id=${sessionId}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Could not verify payment.");
+      }
+
+      // You can now use data.session (Stripe session object)
+      console.log("✅ Stripe session data:", data.session);
+      setIsLoading(false);
+    } catch (err: any) {
+      setError(err.message || "Unexpected error.");
+      setIsLoading(false);
+    }
+  };
+
+  fetchSession();
+}, [sessionId]);
 
   const brassColor = "#B48A6F";
 
