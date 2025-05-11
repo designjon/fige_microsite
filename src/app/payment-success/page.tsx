@@ -8,7 +8,7 @@ import Link from "next/link";
 // Component that uses useSearchParams
 const PaymentSuccessContent: React.FC = () => {
   const searchParams = useSearchParams();
-  const sessionId = searchParams.get("session_id");
+  const sessionId = searchParams?.get("session_id");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
