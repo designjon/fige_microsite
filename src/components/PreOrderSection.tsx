@@ -39,7 +39,7 @@ const PreOrderItem: React.FC<PreOrderItemProps> = ({ unitNumber, status, imageUr
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const { sessionId } = await response.json();
+      const { sessionId } = (await response.json()) as { sessionId: string };
       const stripe = await stripePromise;
 
       if (!stripe) {
