@@ -26,7 +26,7 @@ const PaymentSuccessContent: React.FC = () => {
       const data: { session: any } = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Could not verify payment.");
+        throw new Error("Could not verify payment.");
       }
 
       // You can now use data.session (Stripe session object)
