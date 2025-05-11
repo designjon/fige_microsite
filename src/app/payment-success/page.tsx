@@ -11,6 +11,7 @@ const PaymentSuccessContent: React.FC = () => {
   const sessionId = searchParams?.get("session_id");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sessionData, setSessionData] = useState<any>(null);
 
   // Version with backend verification
   useEffect(() => {
@@ -30,6 +31,7 @@ const PaymentSuccessContent: React.FC = () => {
       }
 
       // You can now use data.session (Stripe session object)
+      setSessionData(data.session);
       console.log("✅ Stripe session data:", data.session);
       setIsLoading(false);
     } catch (err: any) {
@@ -40,6 +42,11 @@ const PaymentSuccessContent: React.FC = () => {
 
   fetchSession();
 }, [sessionId]);
+
+  // ✅ Place them here, after session data is fetched:
+  const customerEmail = sessionData?.customer_details?.email;
+  const productName = sessionData?.line_items?.data?.[0]?.price?.product?.name;
+  const amountTotal = sessionData?.amount_total;
 
   const brassColor = "#B48A6F";
 
@@ -58,9 +65,15 @@ const PaymentSuccessContent: React.FC = () => {
       ) : (
         <>
           <h1 className="text-3xl md:text-4xl font-serif text-white mb-4">Pre-Order Confirmed!</h1>
-          <p className="text-lg text-gray-300 mb-6">
-            Thank you for securing your exclusive Figé spinner. You will receive further updates regarding manufacturing and shipping.
+          <p className="text-lg text-gray-300 mb-2">
+            Thank you {customerEmail ? `(${customerEmail})` : ""} for your order.
           </p>
+<p className="text-lg text-gray-300 mb-2">
+  Product: {productName || "Spinner"}
+</p>
+<p className="text-lg text-gray-300 mb-6">
+  Total Paid: {amountTotal ? `$${(amountTotal / 100).toFixed(2)}` : "—"}
+</p>
           <p className="text-sm text-gray-400 mb-8">Your Stripe Session ID: {sessionId}</p>
           <Link href="/" className="text-lg" style={{ color: brassColor }}>
             Return to Homepage

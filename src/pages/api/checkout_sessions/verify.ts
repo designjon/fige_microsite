@@ -14,10 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const session = await stripe.checkout.sessions.retrieve(session_id, {
-      expand: ["line_items.data.price.product", "customer"],
-    });
+  expand: ['line_items.data.price.product', 'customer_details']
+});
 
-    res.status(200).json({ session });
+    return  res.status(200).json({ session });
   } catch (error: any) {
     console.error("❌ Stripe session fetch failed:", error.message);
     res.status(500).json({ message: error.message });
