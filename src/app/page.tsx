@@ -217,7 +217,7 @@ const HomePageContent: React.FC = () => {
   const [showCancellationMessage, setShowCancellationMessage] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get("payment-cancelled") === "true") {
+    if (searchParams?.get("payment-cancelled") === "true") {
       setShowCancellationMessage(true);
     }
   }, [searchParams]);
