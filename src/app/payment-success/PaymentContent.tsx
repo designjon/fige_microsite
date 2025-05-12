@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import styles from './payment-success.module.css';
 
 interface OrderDetails {
   email: string;
@@ -51,46 +50,51 @@ export default function PaymentContent() {
     fetchSession();
   }, [sessionId]);
 
+  const containerClasses = "max-w-[600px] mx-auto my-10 p-8 bg-red-500 text-green-400 rounded-lg shadow-lg border-4 border-blue-500 relative z-50";
+  const headingClasses = "text-4xl mb-6 text-center text-yellow-300 font-bold";
+  const textClasses = "text-lg mb-4 text-green-400";
+  const linkClasses = "block mt-6 text-fuchsia-400 text-center no-underline hover:text-fuchsia-300";
+
   if (isLoading) {
-    return <div className={styles.paymentSuccessContainer}><p>Loading...</p></div>;
+    return <div className={containerClasses}><p className={textClasses}>Loading...</p></div>;
   }
 
   if (error) {
     return (
-      <div className={styles.paymentSuccessContainer}>
-        <h1>Payment Verification Failed</h1>
-        <p>{error}</p>
-        <Link href="/">Return to Homepage</Link>
+      <div className={containerClasses}>
+        <h1 className={headingClasses}>Payment Verification Failed</h1>
+        <p className={textClasses}>{error}</p>
+        <Link href="/" className={linkClasses}>Return to Homepage</Link>
       </div>
     );
   }
 
   if (!orderDetails) {
-    return <div className={styles.paymentSuccessContainer}><p>No order details found.</p></div>;
+    return <div className={containerClasses}><p className={textClasses}>No order details found.</p></div>;
   }
 
   return (
-    <div className={styles.paymentSuccessContainer}>
-      <h1>Pre-Order Confirmed!</h1>
+    <div className={containerClasses}>
+      <h1 className={headingClasses}>Pre-Order Confirmed!</h1>
       
-      <p>
+      <p className={textClasses}>
         Thank you! Order confirmation sent to {orderDetails.email}
       </p>
       
-      <p>
+      <p className={textClasses}>
         Product: {orderDetails.product}
       </p>
       
-      <p>
+      <p className={textClasses}>
         Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
       </p>
 
-      <div>
-        <p>Your Stripe Session ID:</p>
-        <code>{sessionId}</code>
+      <div className="mt-6 mb-6 p-4 bg-gray-800 rounded">
+        <p className={textClasses}>Your Stripe Session ID:</p>
+        <code className="text-sm font-mono text-gray-400">{sessionId}</code>
       </div>
 
-      <Link href="/">
+      <Link href="/" className={linkClasses}>
         Return to Homepage
       </Link>
     </div>
