@@ -5,13 +5,25 @@ import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
+interface OrderDetails {
+  email: string;
+  amount: number;
+  product: string;
+}
+
+interface ApiResponse {
+  success: boolean;
+  order?: OrderDetails;
+  message?: string;
+}
+
 const PaymentSuccessContent: React.FC = () => {
   const searchParams = useSearchParams();
   const ref = searchParams?.get("ref");
   const sessionId = searchParams?.get("session_id"); // Keep for backward compatibility
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sessionData, setSessionData] = useState<any>(null);
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -26,11 +38,12 @@ const PaymentSuccessContent: React.FC = () => {
         // Use ref if available, fall back to session_id
         const queryParam = ref ? `ref=${ref}` : `session_id=${sessionId}`;
         const res = await fetch(`/api/checkout_sessions/verify?${queryParam}`);
-        const data: { session: any } = await res.json();
+        const data = await res.json() as ApiResponse;
 
         if (!res.ok) throw new Error("Could not verify payment.");
+        if (!data.success || !data.order) throw new Error(data.message || "Verification failed.");
 
-        setSessionData(data.session);
+        setOrderDetails(data.order);
         setIsLoading(false);
       } catch (err: any) {
         setError(err.message || "Unexpected error.");
@@ -41,9 +54,6 @@ const PaymentSuccessContent: React.FC = () => {
     fetchSession();
   }, [ref, sessionId]);
 
-  const customerEmail = sessionData?.customer_details?.email;
-  const productName = sessionData?.line_items?.data?.[0]?.price?.product?.name;
-  const amountTotal = sessionData?.amount_total;
   const brassColor = "#B48A6F";
 
   return (
@@ -58,24 +68,18 @@ const PaymentSuccessContent: React.FC = () => {
             Return to Homepage
           </Link>
         </>
-      ) : (
+      ) : orderDetails && (
         <div className="space-y-4">
           <h1 className="text-3xl md:text-4xl font-serif text-white mb-4">Pre-Order Confirmed!</h1>
-          {customerEmail && (
-            <p className="text-lg text-gray-300">
-              Thank you {customerEmail} for your order.
-            </p>
-          )}
-          {productName && (
-            <p className="text-lg text-gray-300">
-              Product: {productName.replace("##", "#")}
-            </p>
-          )}
-          {amountTotal && (
-            <p className="text-lg text-gray-300">
-              Total Paid: ${(amountTotal / 100).toFixed(2)}
-            </p>
-          )}
+          <p className="text-lg text-gray-300">
+            Thank you {orderDetails.email} for your order.
+          </p>
+          <p className="text-lg text-gray-300">
+            Product: {orderDetails.product}
+          </p>
+          <p className="text-lg text-gray-300">
+            Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
+          </p>
           <div className="mt-8">
             <Link href="/" className="text-lg" style={{ color: brassColor }}>
               Return to Homepage

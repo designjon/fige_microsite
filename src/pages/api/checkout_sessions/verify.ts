@@ -59,20 +59,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ message: "Invalid payment verification details" });
     }
 
-    // Only return the necessary fields
-    const sanitizedSession = {
-      customer_details: session.customer_details,
-      amount_total: session.amount_total,
-      line_items: session.line_items?.data.map(item => ({
-        price: {
-          product: {
-            name: typeof item.price?.product === 'object' ? (item.price.product as Stripe.Product).name : undefined
-          }
-        }
-      }))
+    // Return only the essential data, no sensitive information
+    const productName = session.line_items?.data[0]?.price?.product;
+    const formattedProductName = typeof productName === 'object' && 'name' in productName ? 
+      productName.name.replace("##", "#") : 
+      "Figé Spinner";
+
+    const orderDetails = {
+      success: true,
+      order: {
+        email: session.customer_details?.email,
+        amount: session.amount_total,
+        product: formattedProductName
+      }
     };
 
-    return res.status(200).json({ session: sanitizedSession });
+    return res.status(200).json(orderDetails);
   } catch (error: any) {
     console.error("❌ Stripe session fetch failed:", error.message);
     res.status(500).json({ message: error.message });
