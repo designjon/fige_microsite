@@ -4,6 +4,7 @@
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import styles from './styles.module.css';
 
 interface OrderDetails {
   email: string;
@@ -51,49 +52,45 @@ const PaymentSuccessContent: React.FC = () => {
     fetchSession();
   }, [sessionId]);
 
-  const brassColor = "#B48A6F";
-
   return (
-    <div className="w-full max-w-lg mx-auto px-4 sm:px-6">
+    <div className={styles.container}>
       {isLoading ? (
-        <p className="text-xl text-gray-400">Verifying your payment...</p>
+        <p className={styles.text}>Verifying your payment...</p>
       ) : error ? (
         <>
-          <h1 className="text-3xl md:text-4xl font-serif text-red-500 mb-4">Payment Verification Failed</h1>
-          <p className="text-lg text-gray-300 mb-6">{error}</p>
-          <Link href="/" className="text-lg" style={{ color: brassColor }}>
+          <h1 className={styles.heading} style={{ color: '#EF4444' }}>Payment Verification Failed</h1>
+          <p className={styles.text}>{error}</p>
+          <Link href="/" className={styles.link}>
             Return to Homepage
           </Link>
         </>
       ) : orderDetails && (
-        <div className="space-y-6">
-          <h1 className="text-3xl md:text-4xl font-serif text-white mb-4">Pre-Order Confirmed!</h1>
-          <div className="space-y-3">
-            <p className="text-lg text-gray-300 break-words">
+        <div>
+          <h1 className={styles.heading}>Pre-Order Confirmed!</h1>
+          <div>
+            <p className={styles.text}>
               Thank you! Order confirmation sent to {orderDetails.email}
             </p>
-            <p className="text-lg text-gray-300">
+            <p className={styles.text}>
               Product: {orderDetails.product}
             </p>
-            <p className="text-lg text-gray-300">
+            <p className={styles.text}>
               Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
             </p>
           </div>
           
-          <div className="mt-6 bg-gray-800/50 p-4 rounded-lg max-w-full">
-            <p className="text-sm text-gray-400 mb-2">Your Stripe Session ID:</p>
-            <div className="w-full overflow-hidden">
-              <p className="text-xs text-gray-500 font-mono break-all whitespace-pre-wrap bg-gray-900/50 p-2 rounded select-all">
+          <div className={styles.sessionIdContainer}>
+            <p className={styles.sessionIdLabel}>Your Stripe Session ID:</p>
+            <div>
+              <p className={styles.sessionId}>
                 {sessionId}
               </p>
             </div>
           </div>
 
-          <div className="mt-8">
-            <Link href="/" className="text-lg" style={{ color: brassColor }}>
-              Return to Homepage
-            </Link>
-          </div>
+          <Link href="/" className={styles.link}>
+            Return to Homepage
+          </Link>
         </div>
       )}
     </div>
@@ -102,8 +99,8 @@ const PaymentSuccessContent: React.FC = () => {
 
 const PaymentSuccessPage: React.FC = () => {
   return (
-    <main className="min-h-screen flex flex-col justify-center items-center text-center bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white py-8">
-      <Suspense fallback={<p className="text-xl text-gray-400">Loading payment details...</p>}>
+    <main className={styles.mainContainer}>
+      <Suspense fallback={<p className={styles.text}>Loading payment details...</p>}>
         <PaymentSuccessContent />
       </Suspense>
     </main>
