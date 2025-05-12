@@ -1,7 +1,7 @@
 // src/app/payment-success/page.tsx
 "use client";
 
-import React, { useEffect, useState, Suspense, CSSProperties } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
@@ -17,78 +17,7 @@ interface ApiResponse {
   message?: string;
 }
 
-const containerStyle: CSSProperties = {
-  width: '100%',
-  maxWidth: '32rem',
-  margin: '0 auto',
-  padding: '1rem',
-} as const;
-
-const headingStyle: CSSProperties = {
-  fontSize: '2.25rem',
-  lineHeight: '2.5rem',
-  color: 'white',
-  marginBottom: '1rem',
-  fontFamily: 'serif',
-} as const;
-
-const textStyle: CSSProperties = {
-  fontSize: '1.125rem',
-  lineHeight: '1.75rem',
-  color: '#D1D5DB',
-  marginBottom: '0.5rem',
-} as const;
-
-const sessionIdContainerStyle: CSSProperties = {
-  marginTop: '1.5rem',
-  backgroundColor: 'rgba(31, 41, 55, 0.5)',
-  padding: '1rem',
-  borderRadius: '0.5rem',
-  width: '100%',
-} as const;
-
-const sessionIdLabelStyle: CSSProperties = {
-  fontSize: '0.875rem',
-  color: '#9CA3AF',
-  marginBottom: '0.5rem',
-} as const;
-
-const sessionIdStyle: CSSProperties = {
-  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-  fontSize: '0.75rem',
-  color: '#6B7280',
-  backgroundColor: 'rgba(17, 24, 39, 0.5)',
-  padding: '0.5rem',
-  borderRadius: '0.25rem',
-  wordBreak: 'break-all',
-  whiteSpace: 'pre-wrap',
-  width: '100%',
-  overflowWrap: 'break-word',
-  WebkitUserSelect: 'all',
-  userSelect: 'all',
-} as const;
-
-const linkStyle: CSSProperties = {
-  display: 'inline-block',
-  marginTop: '2rem',
-  fontSize: '1.125rem',
-  color: '#B48A6F',
-  textDecoration: 'none',
-} as const;
-
-const mainContainerStyle: CSSProperties = {
-  minHeight: '100vh',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  textAlign: 'center',
-  background: 'linear-gradient(to bottom, #000000, #1a1a1a, #333333)',
-  color: 'white',
-  padding: '2rem 1rem',
-} as const;
-
-const PaymentSuccessContent: React.FC = () => {
+function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams?.get("session_id");
   const [isLoading, setIsLoading] = useState(true);
@@ -122,59 +51,64 @@ const PaymentSuccessContent: React.FC = () => {
     fetchSession();
   }, [sessionId]);
 
-  return (
-    <div style={containerStyle}>
-      {isLoading ? (
-        <p style={textStyle}>Verifying your payment...</p>
-      ) : error ? (
-        <>
-          <h1 style={{...headingStyle, color: '#EF4444 !important'}}>Payment Verification Failed</h1>
-          <p style={textStyle}>{error}</p>
-          <Link href="/" style={linkStyle}>
-            Return to Homepage
-          </Link>
-        </>
-      ) : orderDetails && (
-        <div>
-          <h1 style={headingStyle}>Pre-Order Confirmed!</h1>
-          <div>
-            <p style={textStyle}>
-              Thank you! Order confirmation sent to {orderDetails.email}
-            </p>
-            <p style={textStyle}>
-              Product: {orderDetails.product}
-            </p>
-            <p style={textStyle}>
-              Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
-            </p>
-          </div>
-          
-          <div style={sessionIdContainerStyle}>
-            <p style={sessionIdLabelStyle}>Your Stripe Session ID:</p>
-            <div>
-              <p style={sessionIdStyle}>
-                {sessionId}
-              </p>
-            </div>
-          </div>
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-          <Link href="/" style={linkStyle}>
-            Return to Homepage
-          </Link>
-        </div>
-      )}
+  if (error) {
+    return (
+      <div>
+        <h1 style={{ color: 'red' }}>Payment Verification Failed</h1>
+        <p>{error}</p>
+        <Link href="/">Return to Homepage</Link>
+      </div>
+    );
+  }
+
+  if (!orderDetails) {
+    return <div>No order details found.</div>;
+  }
+
+  return (
+    <div style={{ 
+      maxWidth: '600px', 
+      margin: '0 auto',
+      padding: '20px',
+      backgroundColor: '#000',
+      color: '#fff'
+    }}>
+      <h1>Pre-Order Confirmed!</h1>
+      <p>Thank you! Order confirmation sent to {orderDetails.email}</p>
+      <p>Product: {orderDetails.product}</p>
+      <p>Total Paid: ${(orderDetails.amount / 100).toFixed(2)}</p>
+      
+      <div style={{
+        marginTop: '20px',
+        padding: '10px',
+        backgroundColor: '#333',
+        wordBreak: 'break-all'
+      }}>
+        <p>Your Stripe Session ID:</p>
+        <code style={{
+          display: 'block',
+          padding: '10px',
+          backgroundColor: '#222',
+          wordBreak: 'break-all',
+          whiteSpace: 'pre-wrap'
+        }}>{sessionId}</code>
+      </div>
+
+      <div style={{ marginTop: '20px' }}>
+        <Link href="/" style={{ color: '#B48A6F' }}>Return to Homepage</Link>
+      </div>
     </div>
   );
-};
+}
 
-const PaymentSuccessPage: React.FC = () => {
+export default function PaymentSuccessPage() {
   return (
-    <main style={mainContainerStyle}>
-      <Suspense fallback={<p style={textStyle}>Loading payment details...</p>}>
-        <PaymentSuccessContent />
-      </Suspense>
-    </main>
+    <Suspense fallback={<div>Loading...</div>}>
+      <PaymentSuccessContent />
+    </Suspense>
   );
-};
-
-export default PaymentSuccessPage;
+}
