@@ -66,7 +66,7 @@ const PaymentSuccessContent: React.FC = () => {
         <>
           <h1 className="text-3xl md:text-4xl font-serif text-white mb-4">Pre-Order Confirmed!</h1>
           <p className="text-lg text-gray-300 mb-2">
-            Thank you {customerEmail ? <strong>{customerEmail}</strong> : ""} for your order.
+            Thank you <strong>{customerEmail}</strong> for your order.
           </p>
 <p className="text-lg text-gray-300 mb-2">
   Product: {productName?.replace("##", "#") || "Spinner"}
