@@ -1,63 +1,60 @@
-// src/app/api/checkout_sessions/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
+// src/app/payment-success/page.tsx
+"use client";
 
-// Initialize Stripe with the secret key
-// Ensure STRIPE_SECRET_KEY is set in your environment variables
-console.log("Loaded Stripe key:", process.env.STRIPE_SECRET_KEY);
+import { useEffect, useState } from "react";
 
-const stripeKey = process.env.STRIPE_SECRET_KEY;
-
-if (!stripeKey) {
-  console.error("❌ Stripe secret key is missing from environment variables.");
-  throw new Error("Stripe secret key not defined");
+interface SessionData {
+  amount_total: number;
+  metadata?: {
+    unitId?: string;
+  };
 }
 
-const stripe = new Stripe(stripeKey, {
-  apiVersion: "2025-04-30.basil",
-  typescript: true,
-});
+export default function PaymentSuccessPage() {
+  const [sessionData, setSessionData] = useState<SessionData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-const FIGE_PRICE_USD_CENTS = 500 * 100; // $500.00
-const CURRENCY = "usd";
+  useEffect(() => {
+    const fetchSessionData = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sessionId = urlParams.get("session_id");
+      if (!sessionId) {
+        setLoading(false);
+        return;
+      }
 
-export async function POST(req: NextRequest) {
-  try {
-    // For simplicity, we assume a fixed price and product.
-    // In a real application, you might fetch product details based on request body.
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: [
-        {
-          price_data: {
-            currency: CURRENCY,
-            product_data: {
-              name: "Figé Luxury Fidget Spinner (Pre-Order)",
-              description: "Limited run, numbered unit. Carbon-fiber PLA, brass bearings, brass inlay.",
-              // Add an image URL if desired
-              // images: [`${req.headers.get("origin")}/images/preorder_coin.png`],
-            },
-            unit_amount: FIGE_PRICE_USD_CENTS,
-          },
-          quantity: 1,
-        },
-      ],
-      mode: "payment", // Use 'payment' for one-time purchases
-      success_url: `${req.headers.get("origin")}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/?payment-cancelled=true`,
-      // Consider adding metadata like user ID if applicable
-      // metadata: { userId: "..." }
-      // Limit quantity if needed, though handled by limited run logic elsewhere
-    });
+      try {
+        const res = await fetch(`/api/checkout_sessions?session_id=${sessionId}`);
+        const data = await res.json();
+        setSessionData(data);
+      } catch (error) {
+        console.error("Failed to fetch session data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // Return the session ID to the client
-    return NextResponse.json({ sessionId: session.id });
+    fetchSessionData();
+  }, []);
 
-  } catch (err) {
-    console.error("Error creating Stripe checkout session:", err);
-    const errorMessage = err instanceof Error ? err.message : "Internal server error";
-    // Return an error response
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  if (loading) {
+    return <p>Loading...</p>;
   }
-}
 
+  if (!sessionData) {
+    return <p>Session not found.</p>;
+  }
+
+  const amountTotal = sessionData?.amount_total;
+  const unitId = sessionData?.metadata?.unitId;
+
+  return (
+    <div className="success-page">
+      <h1>Payment Successful!</h1>
+      <p className="text-lg text-gray-300 mb-2">
+        Reserved Unit: Figé {unitId}
+      </p>
+      <p>Total Paid: ${(amountTotal ?? 0) / 100}</p>
+    </div>
+  );
+}

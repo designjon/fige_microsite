@@ -32,7 +32,7 @@ const PreOrderItem: React.FC<PreOrderItemProps> = ({ unitNumber, status, imageUr
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ unitNumber }), // Send unit number if needed
+        body: JSON.stringify({ unitId: `#${String(unitNumber).padStart(2, "0")}` }),
       });
 
       if (!response.ok) {
@@ -134,4 +134,3 @@ const PreOrderSection: React.FC = () => {
 };
 
 export default PreOrderSection;
-
