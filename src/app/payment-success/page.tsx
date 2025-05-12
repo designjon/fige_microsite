@@ -54,7 +54,7 @@ const PaymentSuccessContent: React.FC = () => {
   const brassColor = "#B48A6F";
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto px-4">
       {isLoading ? (
         <p className="text-xl text-gray-400">Verifying your payment...</p>
       ) : error ? (
@@ -68,19 +68,27 @@ const PaymentSuccessContent: React.FC = () => {
       ) : orderDetails && (
         <div className="space-y-4">
           <h1 className="text-3xl md:text-4xl font-serif text-white mb-4">Pre-Order Confirmed!</h1>
-          <p className="text-lg text-gray-300">
-            Thank you {orderDetails.email} for your order.
-          </p>
-          <p className="text-lg text-gray-300">
-            Product: {orderDetails.product}
-          </p>
-          <p className="text-lg text-gray-300">
-            Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
-          </p>
-          <div className="mt-8">
-            <Link href="/" className="text-lg" style={{ color: brassColor }}>
-              Return to Homepage
-            </Link>
+          <div className="space-y-2">
+            <p className="text-lg text-gray-300 break-words">
+              Thank you {orderDetails.email} for your order.
+            </p>
+            <p className="text-lg text-gray-300">
+              Product: {orderDetails.product}
+            </p>
+            <p className="text-lg text-gray-300">
+              Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
+            </p>
+            <div className="mt-4">
+              <p className="text-sm text-gray-400">Your Stripe Session ID:</p>
+              <p className="text-xs text-gray-500 break-all font-mono bg-gray-800/50 p-2 rounded-md mt-1">
+                {sessionId}
+              </p>
+            </div>
+            <div className="mt-8">
+              <Link href="/" className="text-lg" style={{ color: brassColor }}>
+                Return to Homepage
+              </Link>
+            </div>
           </div>
         </div>
       )}
