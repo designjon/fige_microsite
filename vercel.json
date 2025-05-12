@@ -3,7 +3,5 @@
   "buildCommand": "pnpm run build",
   "devCommand": "pnpm run dev",
   "installCommand": "pnpm install",
-  "settings": {
-    "packageManager": "pnpm"
-  }
+  "packageManager": "pnpm"
 } 
