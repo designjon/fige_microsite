@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
         price_data: {
           currency: "usd",
           product_data: {
-            name: "Figé Spinner",
+            name: "Figé Spinner" #${unitId}`,
           },
           unit_amount: 50000,
         },
