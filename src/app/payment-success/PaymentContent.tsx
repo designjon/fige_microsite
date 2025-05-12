@@ -18,6 +18,8 @@ interface ApiResponse {
 }
 
 export default function PaymentContent() {
+  console.log('PaymentContent rendering, styles:', styles);  // Debug log
+
   const searchParams = useSearchParams();
   const sessionId = searchParams?.get("session_id");
   const [isLoading, setIsLoading] = useState(true);
@@ -25,6 +27,8 @@ export default function PaymentContent() {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
 
   useEffect(() => {
+    console.log('PaymentContent mounted');  // Debug log
+    
     async function fetchSession() {
       if (!sessionId) {
         setError("Missing session ID.");
@@ -51,11 +55,68 @@ export default function PaymentContent() {
     fetchSession();
   }, [sessionId]);
 
+  // Debug render state
+  useEffect(() => {
+    console.log('Current state:', { isLoading, error, orderDetails });
+  }, [isLoading, error, orderDetails]);
+
+  const mainContainerStyle = {
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center' as const,
+    background: 'linear-gradient(to bottom, #000000, #1a1a1a, #333333)',
+    color: 'white',
+    padding: '2rem 1rem',
+  };
+
+  const containerStyle = {
+    width: '100%',
+    maxWidth: '32rem',
+    margin: '0 auto',
+    padding: '2rem',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: '1rem',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+  };
+
+  const headingStyle = {
+    fontSize: '2.25rem',
+    lineHeight: '2.5rem',
+    color: 'white',
+    marginBottom: '1rem',
+    fontFamily: 'serif',
+  };
+
+  const textStyle = {
+    fontSize: '1.125rem',
+    lineHeight: '1.75rem',
+    color: '#D1D5DB',
+    marginBottom: '1rem',
+  };
+
+  const sessionIdContainerStyle = {
+    marginTop: '1.5rem',
+    backgroundColor: 'rgba(31, 41, 55, 0.5)',
+    padding: '1rem',
+    borderRadius: '0.5rem',
+  };
+
+  const linkStyle = {
+    display: 'inline-block',
+    marginTop: '2rem',
+    fontSize: '1.125rem',
+    color: '#B48A6F',
+    textDecoration: 'none',
+  };
+
   if (isLoading) {
     return (
-      <div className={styles.mainContainer}>
-        <div className={styles.container}>
-          <p className={styles.text}>Loading...</p>
+      <div style={mainContainerStyle}>
+        <div style={containerStyle}>
+          <p style={textStyle}>Loading...</p>
         </div>
       </div>
     );
@@ -63,11 +124,11 @@ export default function PaymentContent() {
 
   if (error) {
     return (
-      <div className={styles.mainContainer}>
-        <div className={styles.container}>
-          <h1 className={styles.heading}>Payment Verification Failed</h1>
-          <p className={styles.text}>{error}</p>
-          <Link href="/" className={styles.link}>Return to Homepage</Link>
+      <div style={mainContainerStyle}>
+        <div style={containerStyle}>
+          <h1 style={headingStyle}>Payment Verification Failed</h1>
+          <p style={textStyle}>{error}</p>
+          <Link href="/" style={linkStyle}>Return to Homepage</Link>
         </div>
       </div>
     );
@@ -75,37 +136,37 @@ export default function PaymentContent() {
 
   if (!orderDetails) {
     return (
-      <div className={styles.mainContainer}>
-        <div className={styles.container}>
-          <p className={styles.text}>No order details found.</p>
+      <div style={mainContainerStyle}>
+        <div style={containerStyle}>
+          <p style={textStyle}>No order details found.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.mainContainer}>
-      <div className={styles.container}>
-        <h1 className={styles.heading}>Pre-Order Confirmed!</h1>
+    <div style={mainContainerStyle}>
+      <div style={containerStyle}>
+        <h1 style={headingStyle}>Pre-Order Confirmed!</h1>
         
-        <p className={styles.text}>
+        <p style={textStyle}>
           Thank you! Order confirmation sent to {orderDetails.email}
         </p>
         
-        <p className={styles.text}>
+        <p style={textStyle}>
           Product: {orderDetails.product}
         </p>
         
-        <p className={styles.text}>
+        <p style={textStyle}>
           Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
         </p>
 
-        <div className={styles.sessionIdContainer}>
-          <p className={styles.sessionIdLabel}>Your Stripe Session ID:</p>
-          <code className={styles.sessionId}>{sessionId}</code>
+        <div style={sessionIdContainerStyle}>
+          <p style={textStyle}>Your Stripe Session ID:</p>
+          <code style={{ ...textStyle, fontFamily: 'monospace', fontSize: '0.875rem' }}>{sessionId}</code>
         </div>
 
-        <Link href="/" className={styles.link}>
+        <Link href="/" style={linkStyle}>
           Return to Homepage
         </Link>
       </div>
