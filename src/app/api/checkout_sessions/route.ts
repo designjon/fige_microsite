@@ -1,60 +1,34 @@
-// src/app/payment-success/page.tsx
-"use client";
+import { NextRequest } from "next/server";
+import Stripe from "stripe";
 
-import { useEffect, useState } from "react";
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2024-06-20",
+});
 
-interface SessionData {
-  amount_total: number;
-  metadata?: {
-    unitId?: string;
-  };
-}
+export async function POST(req: NextRequest) {
+  const { unitId } = await req.json();
 
-export default function PaymentSuccessPage() {
-  const [sessionData, setSessionData] = useState<SessionData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items: [
+      {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: "Figé Spinner",
+          },
+          unit_amount: 50000,
+        },
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/?payment-cancelled=true`,
+    metadata: {
+      unitId,
+    },
+  });
 
-  useEffect(() => {
-    const fetchSessionData = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const sessionId = urlParams.get("session_id");
-      if (!sessionId) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const res = await fetch(`/api/checkout_sessions?session_id=${sessionId}`);
-        const data = await res.json();
-        setSessionData(data);
-      } catch (error) {
-        console.error("Failed to fetch session data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSessionData();
-  }, []);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (!sessionData) {
-    return <p>Session not found.</p>;
-  }
-
-  const amountTotal = sessionData?.amount_total;
-  const unitId = sessionData?.metadata?.unitId;
-
-  return (
-    <div className="success-page">
-      <h1>Payment Successful!</h1>
-      <p className="text-lg text-gray-300 mb-2">
-        Reserved Unit: Figé {unitId}
-      </p>
-      <p>Total Paid: ${(amountTotal ?? 0) / 100}</p>
-    </div>
-  );
+  return Response.json({ sessionId: session.id });
 }
