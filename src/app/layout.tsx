@@ -16,8 +16,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} ${robotoMono.variable} antialiased`}>
-        {children}
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+      </head>
+      <body className={`${inter.variable} ${robotoMono.variable} antialiased min-h-screen overflow-x-hidden`}>
+        <div className="max-w-screen min-h-screen">
+          {children}
+        </div>
       </body>
     </html>
   );

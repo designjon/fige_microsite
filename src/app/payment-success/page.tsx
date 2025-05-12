@@ -80,10 +80,10 @@ const PaymentSuccessContent: React.FC = () => {
             </p>
           </div>
           
-          <div className="mt-6 bg-gray-800/50 p-4 rounded-lg">
+          <div className="mt-6 bg-gray-800/50 p-4 rounded-lg max-w-full">
             <p className="text-sm text-gray-400 mb-2">Your Stripe Session ID:</p>
-            <div className="w-full overflow-x-auto">
-              <p className="text-xs text-gray-500 font-mono whitespace-normal break-all">
+            <div className="w-full overflow-hidden">
+              <p className="text-xs text-gray-500 font-mono break-all whitespace-pre-wrap bg-gray-900/50 p-2 rounded select-all">
                 {sessionId}
               </p>
             </div>
