@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import styles from './styles.module.css';
 
 interface OrderDetails {
   email: string;
@@ -60,55 +61,55 @@ export default function PaymentContent() {
 
   const Content = () => {
     if (isLoading) {
-      return <p className="text-lg text-gray-300">Loading...</p>;
+      return <p className={styles.text}>Loading...</p>;
     }
 
     if (error) {
       return (
         <>
-          <h1 className="text-4xl font-serif mb-8 text-red-400">Payment Verification Failed</h1>
-          <p className="text-lg text-gray-300 mb-6">{error}</p>
+          <h1 className={styles.heading} style={{ color: '#EF4444' }}>Payment Verification Failed</h1>
+          <p className={styles.text}>{error}</p>
         </>
       );
     }
 
     if (!orderDetails) {
-      return <p className="text-lg text-gray-300">No order details found.</p>;
+      return <p className={styles.text}>No order details found.</p>;
     }
 
     return (
       <>
-        <h1 className="text-4xl font-serif mb-8 bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
+        <h1 className={styles.heading}>
           Pre-Order Confirmed!
         </h1>
         
-        <p className="text-lg text-gray-300 mb-6">
+        <p className={styles.text}>
           Thank you! Order confirmation sent to {orderDetails.email}
         </p>
         
-        <p className="text-lg text-gray-300 mb-6">
+        <p className={styles.text}>
           Product: {orderDetails.product}
         </p>
         
-        <p className="text-lg text-gray-300 mb-6">
+        <p className={styles.text}>
           Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
         </p>
 
-        <div className="mt-8 p-6 bg-gray-900 rounded-lg border border-gray-800">
-          <p className="text-sm text-gray-500 mb-2">Your Stripe Session ID:</p>
-          <code className="text-xs font-mono text-gray-400 break-all">{sessionId}</code>
+        <div className={styles.sessionIdContainer}>
+          <p className={styles.sessionIdLabel}>Your Stripe Session ID:</p>
+          <code className={styles.sessionId}>{sessionId}</code>
         </div>
       </>
     );
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl mx-auto p-8 bg-gray-900/50 backdrop-blur rounded-xl border border-gray-800/50 shadow-2xl">
+    <div className={styles.mainContainer}>
+      <div className={styles.container}>
         <Content />
         <Link 
           href="/" 
-          className="mt-8 inline-block px-6 py-3 bg-amber-900/20 hover:bg-amber-900/30 text-amber-300 rounded-full transition-all duration-300 border border-amber-700/50"
+          className={styles.link}
         >
           Return to Homepage
         </Link>
