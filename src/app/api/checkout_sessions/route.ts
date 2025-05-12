@@ -17,12 +17,5 @@ export default function PaymentSuccessPage() {
     }
   }, [sessionId]);
 
-  return (
-    <main className="mx-auto max-w-xl px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Payment Success</h1>
-      <p className="text-lg mb-4">
-        Thank you {customerEmail ? <strong>{customerEmail}</strong> : ""} for your order.
-      </p>
-    </main>
-  );
+  return new Response("OK");
 }
