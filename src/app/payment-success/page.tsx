@@ -4,7 +4,6 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import styles from './styles.module.css';
 
 console.log('Payment Success Page loading');
 
@@ -21,7 +20,7 @@ interface ApiResponse {
 }
 
 function PaymentContent() {
-  console.log('PaymentContent rendering - inline version');
+  console.log('PaymentContent rendering');
 
   const searchParams = useSearchParams();
   const sessionId = searchParams?.get("session_id");
@@ -30,7 +29,7 @@ function PaymentContent() {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
 
   useEffect(() => {
-    console.log('PaymentContent mounted - inline version');
+    console.log('PaymentContent mounted');
     
     async function fetchSession() {
       if (!sessionId) {
@@ -59,48 +58,55 @@ function PaymentContent() {
   }, [sessionId]);
 
   if (isLoading) {
-    return <p className={styles.text}>Loading...</p>;
+    return <p className="text-gray-300 text-lg">Loading...</p>;
   }
 
   if (error) {
     return (
-      <>
-        <h1 className={styles.heading} style={{ color: '#EF4444' }}>
+      <div className="space-y-4">
+        <h1 className="text-red-500 text-4xl font-serif mb-4">
           Payment Verification Failed
         </h1>
-        <p className={styles.text}>{error}</p>
-      </>
+        <p className="text-gray-300 text-lg">{error}</p>
+      </div>
     );
   }
 
   if (!orderDetails) {
-    return <p className={styles.text}>No order details found.</p>;
+    return <p className="text-gray-300 text-lg">No order details found.</p>;
   }
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.heading}>
+    <div className="w-full max-w-2xl mx-auto p-8 bg-gray-900/50 backdrop-blur-md rounded-2xl border border-gray-700/30 shadow-2xl">
+      <h1 className="text-4xl font-serif mb-8 text-center bg-gradient-to-r from-amber-300 via-amber-500 to-amber-600 bg-clip-text text-transparent">
         Pre-Order Confirmed!
       </h1>
       
-      <p className={styles.text}>
-        Thank you ({orderDetails.email}) for your order.
-      </p>
-      
-      <p className={styles.text}>
-        Product: {orderDetails.product}
-      </p>
-      
-      <p className={styles.text}>
-        Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
-      </p>
-
-      <div className={styles.sessionIdContainer}>
-        <p className={styles.sessionIdLabel}>Your Stripe Session ID:</p>
-        <code className={styles.sessionId}>{sessionId}</code>
+      <div className="space-y-4 text-center">
+        <p className="text-gray-300 text-lg">
+          Thank you ({orderDetails.email}) for your order.
+        </p>
+        
+        <p className="text-gray-300 text-lg">
+          Product: {orderDetails.product}
+        </p>
+        
+        <p className="text-gray-300 text-lg">
+          Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
+        </p>
       </div>
 
-      <Link href="/" className={styles.link}>
+      <div className="mt-8 p-6 bg-gray-800/50 rounded-xl border border-gray-700/20">
+        <p className="text-gray-400 text-sm mb-3">Your Stripe Session ID:</p>
+        <code className="font-mono text-xs text-gray-300 bg-gray-900/50 p-4 rounded-lg block break-all border border-gray-700/20">
+          {sessionId}
+        </code>
+      </div>
+
+      <Link 
+        href="/" 
+        className="inline-block mt-8 text-lg text-amber-300 px-6 py-3 rounded-full bg-amber-900/20 border border-amber-600/30 transition-colors hover:bg-amber-900/30 hover:text-amber-200"
+      >
         Return to Homepage
       </Link>
     </div>
@@ -111,10 +117,10 @@ export default function PaymentSuccessPage() {
   console.log('Payment Success Page rendering');
   
   return (
-    <div className={styles.mainContainer}>
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-black to-gray-900 p-4">
       <Suspense fallback={
-        <div className={styles.mainContainer}>
-          <p className={styles.text}>Loading...</p>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-black to-gray-900">
+          <p className="text-gray-300 text-lg">Loading...</p>
         </div>
       }>
         <PaymentContent />
