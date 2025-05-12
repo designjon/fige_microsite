@@ -16,25 +16,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     let session;
 
+    // Prioritize session_id if available
     if (session_id && typeof session_id === 'string') {
-      // If session_id is provided, use it directly
-      session = await stripe.checkout.sessions.retrieve(session_id, {
-        expand: ['line_items.data.price.product', 'customer_details']
-      });
+      try {
+        session = await stripe.checkout.sessions.retrieve(session_id, {
+          expand: ['line_items.data.price.product', 'customer_details']
+        });
+      } catch (error) {
+        console.error("Failed to retrieve session by ID:", error);
+        // If session_id fails, fall back to ref
+        if (ref && typeof ref === 'string') {
+          const sessions = await stripe.checkout.sessions.list({
+            limit: 100,
+          });
+
+          const foundSession = sessions.data.find(s => s.client_reference_id === ref);
+          if (!foundSession) {
+            return res.status(404).json({ message: "Session not found" });
+          }
+
+          session = await stripe.checkout.sessions.retrieve(foundSession.id, {
+            expand: ['line_items.data.price.product', 'customer_details']
+          });
+        } else {
+          throw error;
+        }
+      }
     } else if (ref && typeof ref === 'string') {
-      // If ref is provided, search for the session
       const sessions = await stripe.checkout.sessions.list({
         limit: 100,
       });
 
-      session = sessions.data.find(s => s.client_reference_id === ref);
-
-      if (!session) {
+      const foundSession = sessions.data.find(s => s.client_reference_id === ref);
+      if (!foundSession) {
         return res.status(404).json({ message: "Session not found" });
       }
 
-      // Get full session details
-      session = await stripe.checkout.sessions.retrieve(session.id, {
+      session = await stripe.checkout.sessions.retrieve(foundSession.id, {
         expand: ['line_items.data.price.product', 'customer_details']
       });
     } else {
