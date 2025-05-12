@@ -20,11 +20,14 @@ const containerStyle = {
   maxWidth: '600px',
   margin: '40px auto',
   padding: '30px',
-  backgroundColor: '#000000',
-  color: '#ffffff',
+  backgroundColor: '#FF0000',  // Bright red background
+  color: '#00FF00',  // Bright green text
   borderRadius: '8px',
   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-  fontFamily: 'serif'
+  fontFamily: 'serif',
+  border: '10px solid blue',  // Very obvious border
+  position: 'relative' as const,
+  zIndex: 9999,
 };
 
 const headingStyle = {
@@ -113,7 +116,22 @@ export default function PaymentContent() {
   }
 
   return (
-    <div style={containerStyle}>
+    <div style={containerStyle} className="payment-success-container">
+      <style jsx>{`
+        .payment-success-container {
+          max-width: 600px !important;
+          margin: 40px auto !important;
+          padding: 30px !important;
+          background-color: #FF0000 !important;
+          color: #00FF00 !important;
+          border-radius: 8px !important;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+          font-family: serif !important;
+          border: 10px solid blue !important;
+          position: relative !important;
+          z-index: 9999 !important;
+        }
+      `}</style>
       <h1 style={headingStyle}>Pre-Order Confirmed!</h1>
       
       <p style={textStyle}>
