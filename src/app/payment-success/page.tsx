@@ -20,24 +20,20 @@ interface ApiResponse {
 const PaymentSuccessContent: React.FC = () => {
   const searchParams = useSearchParams();
   const ref = searchParams?.get("ref");
-  const sessionId = searchParams?.get("session_id"); // Keep for backward compatibility
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
 
   useEffect(() => {
     const fetchSession = async () => {
-      // Handle both new and old URL parameters
-      if (!ref && !sessionId) {
-        setError("Missing payment verification details.");
+      if (!ref) {
+        setError("Missing order reference.");
         setIsLoading(false);
         return;
       }
 
       try {
-        // Use ref if available, fall back to session_id
-        const queryParam = ref ? `ref=${ref}` : `session_id=${sessionId}`;
-        const res = await fetch(`/api/checkout_sessions/verify?${queryParam}`);
+        const res = await fetch(`/api/checkout_sessions/verify?ref=${ref}`);
         const data = await res.json() as ApiResponse;
 
         if (!res.ok) throw new Error("Could not verify payment.");
@@ -52,7 +48,7 @@ const PaymentSuccessContent: React.FC = () => {
     };
 
     fetchSession();
-  }, [ref, sessionId]);
+  }, [ref]);
 
   const brassColor = "#B48A6F";
 

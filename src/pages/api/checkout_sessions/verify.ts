@@ -6,61 +6,31 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { ref, session_id } = req.query;
+  const { ref } = req.query;
 
-  // Handle both new and old parameters
-  if (!ref && !session_id) {
-    return res.status(400).json({ message: "Missing payment verification details" });
+  if (!ref || typeof ref !== "string") {
+    return res.status(400).json({ message: "Missing order reference" });
   }
 
   try {
-    let session;
+    // List recent sessions and find the one with matching reference ID
+    const sessions = await stripe.checkout.sessions.list({
+      limit: 100,
+    });
 
-    // Prioritize session_id if available
-    if (session_id && typeof session_id === 'string') {
-      try {
-        session = await stripe.checkout.sessions.retrieve(session_id, {
-          expand: ['line_items.data.price.product', 'customer_details']
-        });
-      } catch (error) {
-        console.error("Failed to retrieve session by ID:", error);
-        // If session_id fails, fall back to ref
-        if (ref && typeof ref === 'string') {
-          const sessions = await stripe.checkout.sessions.list({
-            limit: 100,
-          });
+    const session = sessions.data.find(s => s.client_reference_id === ref);
 
-          const foundSession = sessions.data.find(s => s.client_reference_id === ref);
-          if (!foundSession) {
-            return res.status(404).json({ message: "Session not found" });
-          }
-
-          session = await stripe.checkout.sessions.retrieve(foundSession.id, {
-            expand: ['line_items.data.price.product', 'customer_details']
-          });
-        } else {
-          throw error;
-        }
-      }
-    } else if (ref && typeof ref === 'string') {
-      const sessions = await stripe.checkout.sessions.list({
-        limit: 100,
-      });
-
-      const foundSession = sessions.data.find(s => s.client_reference_id === ref);
-      if (!foundSession) {
-        return res.status(404).json({ message: "Session not found" });
-      }
-
-      session = await stripe.checkout.sessions.retrieve(foundSession.id, {
-        expand: ['line_items.data.price.product', 'customer_details']
-      });
-    } else {
-      return res.status(400).json({ message: "Invalid payment verification details" });
+    if (!session) {
+      return res.status(404).json({ message: "Order not found" });
     }
 
+    // Get full session details
+    const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
+      expand: ['line_items.data.price.product', 'customer_details']
+    });
+
     // Return only the essential data, no sensitive information
-    const productName = session.line_items?.data[0]?.price?.product;
+    const productName = fullSession.line_items?.data[0]?.price?.product;
     const formattedProductName = typeof productName === 'object' && 'name' in productName ? 
       productName.name.replace("##", "#") : 
       "Figé Spinner";
@@ -68,8 +38,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const orderDetails = {
       success: true,
       order: {
-        email: session.customer_details?.email,
-        amount: session.amount_total,
+        email: fullSession.customer_details?.email,
+        amount: fullSession.amount_total,
         product: formattedProductName
       }
     };

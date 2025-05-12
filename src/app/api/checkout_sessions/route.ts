@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}&ref=${clientReferenceId}`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success?ref=${clientReferenceId}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/?payment-cancelled=true`,
       client_reference_id: clientReferenceId,
       metadata: {
