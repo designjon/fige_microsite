@@ -19,8 +19,7 @@ interface ApiResponse {
 
 const PaymentSuccessContent: React.FC = () => {
   const searchParams = useSearchParams();
-  const ref = searchParams?.get("ref");
-  const sessionId = searchParams?.get("s");
+  const sessionId = searchParams?.get("session_id");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
