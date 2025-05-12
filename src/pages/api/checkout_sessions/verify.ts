@@ -17,7 +17,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   expand: ['line_items.data.price.product', 'customer_details']
 });
 
-    return  res.status(200).json({ session });
+    const { id, ...sanitizedSession } = session;
+    return res.status(200).json({ session: sanitizedSession });
   } catch (error: any) {
     console.error("❌ Stripe session fetch failed:", error.message);
     res.status(500).json({ message: error.message });
