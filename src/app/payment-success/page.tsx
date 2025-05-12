@@ -66,15 +66,14 @@ const PaymentSuccessContent: React.FC = () => {
         <>
           <h1 className="text-3xl md:text-4xl font-serif text-white mb-4">Pre-Order Confirmed!</h1>
           <p className="text-lg text-gray-300 mb-2">
-            Thank you {customerEmail ? `(${customerEmail})` : ""} for your order.
+            Thank you {customerEmail ? <strong>{customerEmail}</strong> : ""} for your order.
           </p>
 <p className="text-lg text-gray-300 mb-2">
-  Product: {productName || "Spinner"}
+  Product: {productName?.replace("##", "#") || "Spinner"}
 </p>
 <p className="text-lg text-gray-300 mb-6">
   Total Paid: {amountTotal ? `$${(amountTotal / 100).toFixed(2)}` : "—"}
 </p>
-          <p className="text-sm text-gray-400 mb-8">Your Stripe Session ID: {sessionId}</p>
           <Link href="/" className="text-lg" style={{ color: brassColor }}>
             Return to Homepage
           </Link>
@@ -96,4 +95,3 @@ const PaymentSuccessPage: React.FC = () => {
 };
 
 export default PaymentSuccessPage;
-
