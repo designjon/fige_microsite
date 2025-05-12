@@ -70,7 +70,7 @@ const PaymentSuccessContent: React.FC = () => {
           <h1 className="text-3xl md:text-4xl font-serif text-white mb-4">Pre-Order Confirmed!</h1>
           <div className="space-y-3">
             <p className="text-lg text-gray-300 break-words">
-              Thank you {orderDetails.email} for your order.
+              Thank you! Order confirmation sent to {orderDetails.email}
             </p>
             <p className="text-lg text-gray-300">
               Product: {orderDetails.product}
