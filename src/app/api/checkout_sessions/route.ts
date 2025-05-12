@@ -40,19 +40,34 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Encrypt the session ID and store it in a secure HTTP-only cookie
-    const encryptedSessionId = await encrypt(session.id);
-    cookies().set('stripe_session', encryptedSessionId, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 3600, // 1 hour
-      path: '/'
-    });
+    try {
+      // Attempt to encrypt and store the session ID in a cookie
+      const encryptedSessionId = await encrypt(session.id);
+      const cookieStore = cookies();
+      cookieStore.set('stripe_session', encryptedSessionId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility
+        maxAge: 3600, // 1 hour
+        path: '/'
+      });
+    } catch (cookieError) {
+      // Log the cookie error but don't fail the request
+      console.error("Failed to set cookie:", cookieError);
+    }
 
+    // Always return the session ID for the redirect
     return Response.json({ sessionId: session.id });
   } catch (error: any) {
     console.error("🔥 Stripe session creation failed:", error);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    return new Response(JSON.stringify({ 
+      error: "Failed to create checkout session",
+      details: error.message 
+    }), { 
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   }
 }

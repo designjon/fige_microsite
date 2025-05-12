@@ -37,11 +37,17 @@ const PreOrderItem: React.FC<PreOrderItemProps> = ({ unitNumber, status, imageUr
         body: JSON.stringify({ unitId: `#${String(unitNumber).padStart(2, "0")}` }),
       });
 
+      const data = await response.json() as { sessionId?: string; error?: string };
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.error("Server error:", data);
+        throw new Error(data.error || `HTTP error! status: ${response.status}`);
       }
 
-      const { sessionId } = await response.json() as { sessionId: string };
+      if (!data.sessionId) {
+        throw new Error("No session ID returned from server");
+      }
+
       console.log("🟢 Redirecting to Stripe Checkout");
 
       const stripe = await stripePromise;
@@ -49,14 +55,14 @@ const PreOrderItem: React.FC<PreOrderItemProps> = ({ unitNumber, status, imageUr
         throw new Error("Stripe.js has not loaded yet.");
       }
 
-      const { error } = await stripe.redirectToCheckout({ sessionId });
+      const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
       if (error) {
         console.error("Stripe checkout error:", error);
         throw error;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to create checkout session:", error);
-      alert("There was a problem processing your pre-order. Please try again.");
+      alert(error.message || "There was a problem processing your pre-order. Please try again.");
     }
   };
 
