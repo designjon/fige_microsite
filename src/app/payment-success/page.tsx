@@ -1,10 +1,9 @@
 // src/app/payment-success/page.tsx
 "use client";
 
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, CSSProperties } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import styles from './styles.module.css';
 
 interface OrderDetails {
   email: string;
@@ -17,6 +16,77 @@ interface ApiResponse {
   order?: OrderDetails;
   message?: string;
 }
+
+const containerStyle: CSSProperties = {
+  width: '100%',
+  maxWidth: '32rem',
+  margin: '0 auto',
+  padding: '1rem',
+} as const;
+
+const headingStyle: CSSProperties = {
+  fontSize: '2.25rem',
+  lineHeight: '2.5rem',
+  color: 'white',
+  marginBottom: '1rem',
+  fontFamily: 'serif',
+} as const;
+
+const textStyle: CSSProperties = {
+  fontSize: '1.125rem',
+  lineHeight: '1.75rem',
+  color: '#D1D5DB',
+  marginBottom: '0.5rem',
+} as const;
+
+const sessionIdContainerStyle: CSSProperties = {
+  marginTop: '1.5rem',
+  backgroundColor: 'rgba(31, 41, 55, 0.5)',
+  padding: '1rem',
+  borderRadius: '0.5rem',
+  width: '100%',
+} as const;
+
+const sessionIdLabelStyle: CSSProperties = {
+  fontSize: '0.875rem',
+  color: '#9CA3AF',
+  marginBottom: '0.5rem',
+} as const;
+
+const sessionIdStyle: CSSProperties = {
+  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+  fontSize: '0.75rem',
+  color: '#6B7280',
+  backgroundColor: 'rgba(17, 24, 39, 0.5)',
+  padding: '0.5rem',
+  borderRadius: '0.25rem',
+  wordBreak: 'break-all',
+  whiteSpace: 'pre-wrap',
+  width: '100%',
+  overflowWrap: 'break-word',
+  WebkitUserSelect: 'all',
+  userSelect: 'all',
+} as const;
+
+const linkStyle: CSSProperties = {
+  display: 'inline-block',
+  marginTop: '2rem',
+  fontSize: '1.125rem',
+  color: '#B48A6F',
+  textDecoration: 'none',
+} as const;
+
+const mainContainerStyle: CSSProperties = {
+  minHeight: '100vh',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  textAlign: 'center',
+  background: 'linear-gradient(to bottom, #000000, #1a1a1a, #333333)',
+  color: 'white',
+  padding: '2rem 1rem',
+} as const;
 
 const PaymentSuccessContent: React.FC = () => {
   const searchParams = useSearchParams();
@@ -53,42 +123,42 @@ const PaymentSuccessContent: React.FC = () => {
   }, [sessionId]);
 
   return (
-    <div className={styles.container}>
+    <div style={containerStyle}>
       {isLoading ? (
-        <p className={styles.text}>Verifying your payment...</p>
+        <p style={textStyle}>Verifying your payment...</p>
       ) : error ? (
         <>
-          <h1 className={styles.heading} style={{ color: '#EF4444' }}>Payment Verification Failed</h1>
-          <p className={styles.text}>{error}</p>
-          <Link href="/" className={styles.link}>
+          <h1 style={{...headingStyle, color: '#EF4444 !important'}}>Payment Verification Failed</h1>
+          <p style={textStyle}>{error}</p>
+          <Link href="/" style={linkStyle}>
             Return to Homepage
           </Link>
         </>
       ) : orderDetails && (
         <div>
-          <h1 className={styles.heading}>Pre-Order Confirmed!</h1>
+          <h1 style={headingStyle}>Pre-Order Confirmed!</h1>
           <div>
-            <p className={styles.text}>
+            <p style={textStyle}>
               Thank you! Order confirmation sent to {orderDetails.email}
             </p>
-            <p className={styles.text}>
+            <p style={textStyle}>
               Product: {orderDetails.product}
             </p>
-            <p className={styles.text}>
+            <p style={textStyle}>
               Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
             </p>
           </div>
           
-          <div className={styles.sessionIdContainer}>
-            <p className={styles.sessionIdLabel}>Your Stripe Session ID:</p>
+          <div style={sessionIdContainerStyle}>
+            <p style={sessionIdLabelStyle}>Your Stripe Session ID:</p>
             <div>
-              <p className={styles.sessionId}>
+              <p style={sessionIdStyle}>
                 {sessionId}
               </p>
             </div>
           </div>
 
-          <Link href="/" className={styles.link}>
+          <Link href="/" style={linkStyle}>
             Return to Homepage
           </Link>
         </div>
@@ -99,8 +169,8 @@ const PaymentSuccessContent: React.FC = () => {
 
 const PaymentSuccessPage: React.FC = () => {
   return (
-    <main className={styles.mainContainer}>
-      <Suspense fallback={<p className={styles.text}>Loading payment details...</p>}>
+    <main style={mainContainerStyle}>
+      <Suspense fallback={<p style={textStyle}>Loading payment details...</p>}>
         <PaymentSuccessContent />
       </Suspense>
     </main>

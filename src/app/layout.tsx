@@ -18,11 +18,14 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <style>{`
+          * {
+            outline: 1px solid rgba(255, 0, 0, 0.1) !important;
+          }
+        `}</style>
       </head>
-      <body className={`${inter.variable} ${robotoMono.variable} antialiased min-h-screen overflow-x-hidden`}>
-        <div className="max-w-screen min-h-screen">
-          {children}
-        </div>
+      <body className={`${inter.variable} ${robotoMono.variable} antialiased min-h-screen overflow-x-hidden`} style={{ margin: 0, padding: 0 }}>
+        {children}
       </body>
     </html>
   );
