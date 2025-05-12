@@ -6,7 +6,7 @@ import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
 import { RevealWrapper, RevealList } from 'next-reveal'; // Added import
 
-// Make sure to call `loadStripe` outside of a component’s render to avoid
+// Make sure to call `loadStripe` outside of a component's render to avoid
 // recreating the `Stripe` object on every render.
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
@@ -41,25 +41,22 @@ const PreOrderItem: React.FC<PreOrderItemProps> = ({ unitNumber, status, imageUr
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const { sessionId } = (await response.json()) as { sessionId: string };
-      console.log("🟢 Session ID received:", sessionId);
+      const { sessionId } = await response.json() as { sessionId: string };
+      console.log("🟢 Redirecting to Stripe Checkout");
 
       const stripe = await stripePromise;
-
       if (!stripe) {
         throw new Error("Stripe.js has not loaded yet.");
       }
 
-      console.log("🔵 Redirecting to Stripe Checkout");
       const { error } = await stripe.redirectToCheckout({ sessionId });
-
       if (error) {
         console.error("Stripe checkout error:", error);
-        // Handle error display to user if needed
+        throw error;
       }
     } catch (error) {
       console.error("Failed to create checkout session:", error);
-      // Handle error display to user if needed
+      alert("There was a problem processing your pre-order. Please try again.");
     }
   };
 
