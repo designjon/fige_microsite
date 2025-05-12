@@ -12,6 +12,9 @@ export async function POST(req: NextRequest) {
     const { unitId }: { unitId: string } = await req.json();
     console.log("📦 unitId from request body:", unitId);
 
+    // Create a unique reference ID
+    const clientReferenceId = `order_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -27,8 +30,9 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success?ref=${clientReferenceId}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/?payment-cancelled=true`,
+      client_reference_id: clientReferenceId,
       metadata: {
         unitId,
       },

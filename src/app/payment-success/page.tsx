@@ -7,21 +7,21 @@ import Link from "next/link";
 
 const PaymentSuccessContent: React.FC = () => {
   const searchParams = useSearchParams();
-  const sessionId = searchParams?.get("session_id");
+  const ref = searchParams?.get("ref");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sessionData, setSessionData] = useState<any>(null);
 
   useEffect(() => {
     const fetchSession = async () => {
-      if (!sessionId) {
-        setError("Missing session ID.");
+      if (!ref) {
+        setError("Missing reference ID.");
         setIsLoading(false);
         return;
       }
 
       try {
-        const res = await fetch(`/api/checkout_sessions/verify?session_id=${sessionId}`);
+        const res = await fetch(`/api/checkout_sessions/verify?ref=${ref}`);
         const data: { session: any } = await res.json();
 
         if (!res.ok) throw new Error("Could not verify payment.");
@@ -35,7 +35,7 @@ const PaymentSuccessContent: React.FC = () => {
     };
 
     fetchSession();
-  }, [sessionId]);
+  }, [ref]);
 
   const customerEmail = sessionData?.customer_details?.email;
   const productName = sessionData?.line_items?.data?.[0]?.price?.product?.name;
@@ -59,7 +59,7 @@ const PaymentSuccessContent: React.FC = () => {
           <h1 className="text-3xl md:text-4xl font-serif text-white mb-4">Pre-Order Confirmed!</h1>
           {customerEmail && (
             <p className="text-lg text-gray-300">
-              Thank you ({customerEmail}) for your order.
+              Thank you {customerEmail} for your order.
             </p>
           )}
           {productName && (

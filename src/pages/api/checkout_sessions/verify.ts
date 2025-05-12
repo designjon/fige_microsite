@@ -6,22 +6,34 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { session_id } = req.query;
+  const { ref } = req.query;
 
-  if (!session_id || typeof session_id !== "string") {
-    return res.status(400).json({ message: "Missing or invalid session_id" });
+  if (!ref || typeof ref !== "string") {
+    return res.status(400).json({ message: "Missing or invalid reference ID" });
   }
 
   try {
-    const session = await stripe.checkout.sessions.retrieve(session_id, {
+    // List recent sessions and find the one with matching reference ID
+    const sessions = await stripe.checkout.sessions.list({
+      limit: 100,
+    });
+
+    const session = sessions.data.find(s => s.client_reference_id === ref);
+
+    if (!session) {
+      return res.status(404).json({ message: "Session not found" });
+    }
+
+    // Retrieve full session details
+    const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
       expand: ['line_items.data.price.product', 'customer_details']
     });
 
     // Only return the necessary fields
     const sanitizedSession = {
-      customer_details: session.customer_details,
-      amount_total: session.amount_total,
-      line_items: session.line_items?.data.map(item => ({
+      customer_details: fullSession.customer_details,
+      amount_total: fullSession.amount_total,
+      line_items: fullSession.line_items?.data.map(item => ({
         price: {
           product: {
             name: typeof item.price?.product === 'object' ? (item.price.product as Stripe.Product).name : undefined
