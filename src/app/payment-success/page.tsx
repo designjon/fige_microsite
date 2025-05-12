@@ -55,21 +55,29 @@ const PaymentSuccessContent: React.FC = () => {
           </Link>
         </>
       ) : (
-        <>
+        <div className="space-y-4">
           <h1 className="text-3xl md:text-4xl font-serif text-white mb-4">Pre-Order Confirmed!</h1>
-          <p className="text-lg text-gray-300 mb-2">
-            Thank you <strong>{customerEmail}</strong> for your order.
-          </p>
-          <p className="text-lg text-gray-300 mb-2">
-            Product: {productName?.replace("##", "#") || "Spinner"}
-          </p>
-          <p className="text-lg text-gray-300 mb-6">
-            Total Paid: {amountTotal ? `$${(amountTotal / 100).toFixed(2)}` : "—"}
-          </p>
-          <Link href="/" className="text-lg" style={{ color: brassColor }}>
-            Return to Homepage
-          </Link>
-        </>
+          {customerEmail && (
+            <p className="text-lg text-gray-300">
+              Thank you ({customerEmail}) for your order.
+            </p>
+          )}
+          {productName && (
+            <p className="text-lg text-gray-300">
+              Product: {productName.replace("##", "#")}
+            </p>
+          )}
+          {amountTotal && (
+            <p className="text-lg text-gray-300">
+              Total Paid: ${(amountTotal / 100).toFixed(2)}
+            </p>
+          )}
+          <div className="mt-8">
+            <Link href="/" className="text-lg" style={{ color: brassColor }}>
+              Return to Homepage
+            </Link>
+          </div>
+        </div>
       )}
     </div>
   );

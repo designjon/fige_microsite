@@ -14,10 +14,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const session = await stripe.checkout.sessions.retrieve(session_id, {
-  expand: ['line_items.data.price.product', 'customer_details']
-});
+      expand: ['line_items.data.price.product', 'customer_details']
+    });
 
-    const { id, ...sanitizedSession } = session;
+    // Only return the necessary fields
+    const sanitizedSession = {
+      customer_details: session.customer_details,
+      amount_total: session.amount_total,
+      line_items: session.line_items?.data.map(item => ({
+        price: {
+          product: {
+            name: typeof item.price?.product === 'object' ? (item.price.product as Stripe.Product).name : undefined
+          }
+        }
+      }))
+    };
+
     return res.status(200).json({ session: sanitizedSession });
   } catch (error: any) {
     console.error("❌ Stripe session fetch failed:", error.message);
