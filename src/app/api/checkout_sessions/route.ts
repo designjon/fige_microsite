@@ -1,42 +1,27 @@
-import { NextRequest } from "next/server";
-import Stripe from "stripe";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-04-30.basil",
-});
-// why is it no worky
-export async function POST(req: NextRequest) {
-  console.log("➡️ Received POST request to create Stripe session");
+export default function PaymentSuccessPage() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+  const [customerEmail, setCustomerEmail] = useState<string | null>(null);
 
-  try {
-    const { unitId }: { unitId: string } = await req.json();
-    console.log("📦 unitId from request body:", unitId);
+  useEffect(() => {
+    if (sessionId) {
+      fetch(`/api/checkout_sessions/${sessionId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setCustomerEmail(data.customer_email);
+        });
+    }
+  }, [sessionId]);
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: `Figé Spinner #${unitId.replace(/^#+/, "")}`,
-            },
-            unit_amount: 50000,
-          },
-          quantity: 1,
-        },
-      ],
-      mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/?payment-cancelled=true`,
-      metadata: {
-        unitId,
-      },
-    });
-
-    return Response.json({ sessionId: session.id });
-  } catch (error) {
-    console.error("🔥 Stripe session creation failed:", error);
-    return new Response("Internal Server Error", { status: 500 });
-  }
+  return (
+    <main className="mx-auto max-w-xl px-4 py-8">
+      <h1 className="text-3xl font-bold mb-4">Payment Success</h1>
+      <p className="text-lg mb-4">
+        Thank you {customerEmail ? <strong>{customerEmail}</strong> : ""} for your order.
+      </p>
+    </main>
+  );
 }
