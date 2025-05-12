@@ -1,24 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
-import { decrypt } from "../../../utils/encryption";
-import { cookies } from 'next/headers';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil",
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const sessionCookie = req.cookies.stripe_session;
+  const { session_id } = req.query;
 
-  if (!sessionCookie) {
+  if (!session_id || typeof session_id !== 'string') {
     return res.status(400).json({ 
       success: false,
-      message: "Unable to verify payment. Please contact support if you believe this is an error." 
+      message: "Missing session ID." 
     });
   }
 
   try {
-    const session_id = await decrypt(sessionCookie);
     const session = await stripe.checkout.sessions.retrieve(session_id, {
       expand: ['line_items.data.price.product', 'customer_details']
     });
@@ -38,8 +35,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     };
 
-    // Clear the session cookie after successful verification
-    res.setHeader('Set-Cookie', 'stripe_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT');
     return res.status(200).json(orderDetails);
   } catch (error: any) {
     console.error("❌ Stripe session fetch failed:", error.message);

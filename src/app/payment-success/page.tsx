@@ -20,29 +20,37 @@ interface ApiResponse {
 const PaymentSuccessContent: React.FC = () => {
   const searchParams = useSearchParams();
   const ref = searchParams?.get("ref");
+  const sessionId = searchParams?.get("s");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
 
   useEffect(() => {
     const fetchSession = async () => {
+      if (!sessionId) {
+        setError("Missing session ID.");
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        const res = await fetch('/api/checkout_sessions/verify');
+        const res = await fetch(`/api/checkout_sessions/verify?session_id=${sessionId}`);
         const data = await res.json() as ApiResponse;
 
-        if (!res.ok) throw new Error("Could not verify payment.");
+        if (!res.ok) throw new Error(data.message || "Could not verify payment.");
         if (!data.success || !data.order) throw new Error(data.message || "Verification failed.");
 
         setOrderDetails(data.order);
         setIsLoading(false);
       } catch (err: any) {
-        setError("There was a problem verifying your payment. Please contact support if the charge appears on your statement.");
+        console.error("Verification error:", err);
+        setError(err.message || "There was a problem verifying your payment. Please contact support if the charge appears on your statement.");
         setIsLoading(false);
       }
     };
 
     fetchSession();
-  }, []);
+  }, [sessionId]);
 
   const brassColor = "#B48A6F";
 
