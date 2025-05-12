@@ -8,20 +8,24 @@ import Link from "next/link";
 const PaymentSuccessContent: React.FC = () => {
   const searchParams = useSearchParams();
   const ref = searchParams?.get("ref");
+  const sessionId = searchParams?.get("session_id"); // Keep for backward compatibility
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sessionData, setSessionData] = useState<any>(null);
 
   useEffect(() => {
     const fetchSession = async () => {
-      if (!ref) {
-        setError("Missing reference ID.");
+      // Handle both new and old URL parameters
+      if (!ref && !sessionId) {
+        setError("Missing payment verification details.");
         setIsLoading(false);
         return;
       }
 
       try {
-        const res = await fetch(`/api/checkout_sessions/verify?ref=${ref}`);
+        // Use ref if available, fall back to session_id
+        const queryParam = ref ? `ref=${ref}` : `session_id=${sessionId}`;
+        const res = await fetch(`/api/checkout_sessions/verify?${queryParam}`);
         const data: { session: any } = await res.json();
 
         if (!res.ok) throw new Error("Could not verify payment.");
@@ -35,7 +39,7 @@ const PaymentSuccessContent: React.FC = () => {
     };
 
     fetchSession();
-  }, [ref]);
+  }, [ref, sessionId]);
 
   const customerEmail = sessionData?.customer_details?.email;
   const productName = sessionData?.line_items?.data?.[0]?.price?.product?.name;
