@@ -95,4 +95,4 @@ export default function PaymentContent() {
       </Link>
     </div>
   );
-} 
+}
