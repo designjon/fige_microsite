@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: `Figé Spinner #${unitId}`,
+              name: `Figé Spinner #${unitId.replace(/^#+/, "")}`,
             },
             unit_amount: 50000,
           },
