@@ -4,7 +4,7 @@ import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil",
 });
-
+// why is it no worky
 export async function POST(req: NextRequest) {
   const { unitId }: { unitId: string } = await req.json();
 
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
         price_data: {
           currency: "usd",
           product_data: {
-            name: "Figé Spinner" #${unitId}`,
+            name: `Figé Spinner #${unitId}`,
           },
           unit_amount: 50000,
         },
