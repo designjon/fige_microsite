@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import styles from './styles.module.css';
 
 interface OrderDetails {
   email: string;
@@ -18,7 +17,7 @@ interface ApiResponse {
 }
 
 export default function PaymentContent() {
-  console.log('PaymentContent rendering, styles:', styles);  // Debug log
+  console.log('PaymentContent rendering');
 
   const searchParams = useSearchParams();
   const sessionId = searchParams?.get("session_id");
@@ -27,7 +26,7 @@ export default function PaymentContent() {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
 
   useEffect(() => {
-    console.log('PaymentContent mounted');  // Debug log
+    console.log('PaymentContent mounted');
     
     async function fetchSession() {
       if (!sessionId) {
@@ -55,118 +54,62 @@ export default function PaymentContent() {
     fetchSession();
   }, [sessionId]);
 
-  // Debug render state
   useEffect(() => {
-    console.log('Current state:', { isLoading, error, orderDetails });
+    console.log('State updated:', { isLoading, error, orderDetails });
   }, [isLoading, error, orderDetails]);
 
-  const mainContainerStyle = {
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center' as const,
-    background: 'linear-gradient(to bottom, #000000, #1a1a1a, #333333)',
-    color: 'white',
-    padding: '2rem 1rem',
-  };
+  const Content = () => {
+    if (isLoading) {
+      return <p className="text-lg text-gray-300">Loading...</p>;
+    }
 
-  const containerStyle = {
-    width: '100%',
-    maxWidth: '32rem',
-    margin: '0 auto',
-    padding: '2rem',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: '1rem',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-  };
+    if (error) {
+      return (
+        <>
+          <h1 className="text-4xl font-serif mb-8 text-red-400">Payment Verification Failed</h1>
+          <p className="text-lg text-gray-300 mb-6">{error}</p>
+        </>
+      );
+    }
 
-  const headingStyle = {
-    fontSize: '2.25rem',
-    lineHeight: '2.5rem',
-    color: 'white',
-    marginBottom: '1rem',
-    fontFamily: 'serif',
-  };
+    if (!orderDetails) {
+      return <p className="text-lg text-gray-300">No order details found.</p>;
+    }
 
-  const textStyle = {
-    fontSize: '1.125rem',
-    lineHeight: '1.75rem',
-    color: '#D1D5DB',
-    marginBottom: '1rem',
-  };
-
-  const sessionIdContainerStyle = {
-    marginTop: '1.5rem',
-    backgroundColor: 'rgba(31, 41, 55, 0.5)',
-    padding: '1rem',
-    borderRadius: '0.5rem',
-  };
-
-  const linkStyle = {
-    display: 'inline-block',
-    marginTop: '2rem',
-    fontSize: '1.125rem',
-    color: '#B48A6F',
-    textDecoration: 'none',
-  };
-
-  if (isLoading) {
     return (
-      <div style={mainContainerStyle}>
-        <div style={containerStyle}>
-          <p style={textStyle}>Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div style={mainContainerStyle}>
-        <div style={containerStyle}>
-          <h1 style={headingStyle}>Payment Verification Failed</h1>
-          <p style={textStyle}>{error}</p>
-          <Link href="/" style={linkStyle}>Return to Homepage</Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (!orderDetails) {
-    return (
-      <div style={mainContainerStyle}>
-        <div style={containerStyle}>
-          <p style={textStyle}>No order details found.</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div style={mainContainerStyle}>
-      <div style={containerStyle}>
-        <h1 style={headingStyle}>Pre-Order Confirmed!</h1>
+      <>
+        <h1 className="text-4xl font-serif mb-8 bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
+          Pre-Order Confirmed!
+        </h1>
         
-        <p style={textStyle}>
+        <p className="text-lg text-gray-300 mb-6">
           Thank you! Order confirmation sent to {orderDetails.email}
         </p>
         
-        <p style={textStyle}>
+        <p className="text-lg text-gray-300 mb-6">
           Product: {orderDetails.product}
         </p>
         
-        <p style={textStyle}>
+        <p className="text-lg text-gray-300 mb-6">
           Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
         </p>
 
-        <div style={sessionIdContainerStyle}>
-          <p style={textStyle}>Your Stripe Session ID:</p>
-          <code style={{ ...textStyle, fontFamily: 'monospace', fontSize: '0.875rem' }}>{sessionId}</code>
+        <div className="mt-8 p-6 bg-gray-900 rounded-lg border border-gray-800">
+          <p className="text-sm text-gray-500 mb-2">Your Stripe Session ID:</p>
+          <code className="text-xs font-mono text-gray-400 break-all">{sessionId}</code>
         </div>
+      </>
+    );
+  };
 
-        <Link href="/" style={linkStyle}>
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl mx-auto p-8 bg-gray-900/50 backdrop-blur rounded-xl border border-gray-800/50 shadow-2xl">
+        <Content />
+        <Link 
+          href="/" 
+          className="mt-8 inline-block px-6 py-3 bg-amber-900/20 hover:bg-amber-900/30 text-amber-300 rounded-full transition-all duration-300 border border-amber-700/50"
+        >
           Return to Homepage
         </Link>
       </div>
