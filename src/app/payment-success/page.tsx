@@ -54,7 +54,7 @@ const PaymentSuccessContent: React.FC = () => {
   const brassColor = "#B48A6F";
 
   return (
-    <div className="max-w-2xl mx-auto px-4">
+    <div className="w-full max-w-lg mx-auto px-4 sm:px-6">
       {isLoading ? (
         <p className="text-xl text-gray-400">Verifying your payment...</p>
       ) : error ? (
@@ -66,9 +66,9 @@ const PaymentSuccessContent: React.FC = () => {
           </Link>
         </>
       ) : orderDetails && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           <h1 className="text-3xl md:text-4xl font-serif text-white mb-4">Pre-Order Confirmed!</h1>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <p className="text-lg text-gray-300 break-words">
               Thank you {orderDetails.email} for your order.
             </p>
@@ -78,17 +78,21 @@ const PaymentSuccessContent: React.FC = () => {
             <p className="text-lg text-gray-300">
               Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
             </p>
-            <div className="mt-4">
-              <p className="text-sm text-gray-400">Your Stripe Session ID:</p>
-              <p className="text-xs text-gray-500 break-all font-mono bg-gray-800/50 p-2 rounded-md mt-1">
+          </div>
+          
+          <div className="mt-6 bg-gray-800/50 p-4 rounded-lg">
+            <p className="text-sm text-gray-400 mb-2">Your Stripe Session ID:</p>
+            <div className="w-full overflow-x-auto">
+              <p className="text-xs text-gray-500 font-mono whitespace-normal break-all">
                 {sessionId}
               </p>
             </div>
-            <div className="mt-8">
-              <Link href="/" className="text-lg" style={{ color: brassColor }}>
-                Return to Homepage
-              </Link>
-            </div>
+          </div>
+
+          <div className="mt-8">
+            <Link href="/" className="text-lg" style={{ color: brassColor }}>
+              Return to Homepage
+            </Link>
           </div>
         </div>
       )}
@@ -98,7 +102,7 @@ const PaymentSuccessContent: React.FC = () => {
 
 const PaymentSuccessPage: React.FC = () => {
   return (
-    <main className="min-h-screen flex flex-col justify-center items-center text-center bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white p-8">
+    <main className="min-h-screen flex flex-col justify-center items-center text-center bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white py-8">
       <Suspense fallback={<p className="text-xl text-gray-400">Loading payment details...</p>}>
         <PaymentSuccessContent />
       </Suspense>
