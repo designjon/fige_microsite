@@ -50,10 +50,11 @@ export default function PaymentContent() {
     fetchSession();
   }, [sessionId]);
 
-  const containerClasses = "max-w-[600px] mx-auto my-10 p-8 bg-red-500 text-green-400 rounded-lg shadow-lg border-4 border-blue-500 relative z-50";
-  const headingClasses = "text-4xl mb-6 text-center text-yellow-300 font-bold";
-  const textClasses = "text-lg mb-4 text-green-400";
-  const linkClasses = "block mt-6 text-fuchsia-400 text-center no-underline hover:text-fuchsia-300";
+  const containerClasses = "w-full max-w-2xl mx-auto px-6 py-12 bg-black/30 backdrop-blur-sm rounded-xl border border-gray-700/50 shadow-2xl";
+  const headingClasses = "text-5xl mb-8 font-serif bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent";
+  const textClasses = "text-xl mb-6 text-gray-300";
+  const linkClasses = "mt-8 inline-block px-8 py-3 bg-amber-700/20 hover:bg-amber-700/30 text-amber-300 rounded-full transition-all duration-300 border border-amber-700/50";
+  const sessionIdClasses = "mt-8 p-6 bg-black/50 rounded-lg border border-gray-800 font-mono text-sm text-gray-400 break-all";
 
   if (isLoading) {
     return <div className={containerClasses}><p className={textClasses}>Loading...</p></div>;
@@ -89,9 +90,9 @@ export default function PaymentContent() {
         Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
       </p>
 
-      <div className="mt-6 mb-6 p-4 bg-gray-800 rounded">
-        <p className={textClasses}>Your Stripe Session ID:</p>
-        <code className="text-sm font-mono text-gray-400">{sessionId}</code>
+      <div className={sessionIdClasses}>
+        <p className="mb-2 text-gray-500">Your Stripe Session ID:</p>
+        <code>{sessionId}</code>
       </div>
 
       <Link href="/" className={linkClasses}>
