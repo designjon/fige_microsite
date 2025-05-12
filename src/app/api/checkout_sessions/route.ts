@@ -1,5 +1,7 @@
 import { NextRequest } from "next/server";
 import Stripe from "stripe";
+import { cookies } from 'next/headers';
+import { encrypt } from '../../../utils/encryption';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil",
@@ -36,6 +38,16 @@ export async function POST(req: NextRequest) {
       metadata: {
         unitId,
       },
+    });
+
+    // Encrypt the session ID and store it in a secure HTTP-only cookie
+    const encryptedSessionId = await encrypt(session.id);
+    cookies().set('stripe_session', encryptedSessionId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600, // 1 hour
+      path: '/'
     });
 
     return Response.json({ sessionId: session.id });

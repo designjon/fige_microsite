@@ -26,14 +26,8 @@ const PaymentSuccessContent: React.FC = () => {
 
   useEffect(() => {
     const fetchSession = async () => {
-      if (!ref) {
-        setError("Missing order reference.");
-        setIsLoading(false);
-        return;
-      }
-
       try {
-        const res = await fetch(`/api/checkout_sessions/verify?ref=${ref}`);
+        const res = await fetch('/api/checkout_sessions/verify');
         const data = await res.json() as ApiResponse;
 
         if (!res.ok) throw new Error("Could not verify payment.");
@@ -42,20 +36,20 @@ const PaymentSuccessContent: React.FC = () => {
         setOrderDetails(data.order);
         setIsLoading(false);
       } catch (err: any) {
-        setError(err.message || "Unexpected error.");
+        setError("There was a problem verifying your payment. Please contact support if the charge appears on your statement.");
         setIsLoading(false);
       }
     };
 
     fetchSession();
-  }, [ref]);
+  }, []);
 
   const brassColor = "#B48A6F";
 
   return (
     <div className="max-w-2xl mx-auto">
       {isLoading ? (
-        <p className="text-xl text-gray-400">Verifying payment...</p>
+        <p className="text-xl text-gray-400">Verifying your payment...</p>
       ) : error ? (
         <>
           <h1 className="text-3xl md:text-4xl font-serif text-red-500 mb-4">Payment Verification Failed</h1>
