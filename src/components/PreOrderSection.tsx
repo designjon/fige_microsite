@@ -25,6 +25,8 @@ const PreOrderItem: React.FC<PreOrderItemProps> = ({ unitNumber, status, imageUr
 
   const handlePreOrderClick = async () => {
     if (isSold) return;
+    
+    console.log("🟡 Starting pre-order for unit:", unitNumber);
 
     try {
       const response = await fetch("/api/checkout_sessions", {
@@ -40,12 +42,15 @@ const PreOrderItem: React.FC<PreOrderItemProps> = ({ unitNumber, status, imageUr
       }
 
       const { sessionId } = (await response.json()) as { sessionId: string };
+      console.log("🟢 Session ID received:", sessionId);
+
       const stripe = await stripePromise;
 
       if (!stripe) {
         throw new Error("Stripe.js has not loaded yet.");
       }
 
+      console.log("🔵 Redirecting to Stripe Checkout");
       const { error } = await stripe.redirectToCheckout({ sessionId });
 
       if (error) {
