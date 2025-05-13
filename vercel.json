@@ -1,15 +1,5 @@
 {
   "framework": "nextjs",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next",
-      "config": {
-        "postcss": true,
-        "minify": true
-      }
-    }
-  ],
   "env": {
     "NODE_ENV": "production",
     "PNPM_VERSION": "10.0.0"
