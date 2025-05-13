@@ -77,8 +77,23 @@ function PaymentContent() {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-8 bg-gray-900/50 backdrop-blur-md rounded-2xl border border-gray-700/30 shadow-2xl">
-      <h1 className="text-4xl font-serif mb-8 text-center bg-gradient-to-r from-amber-300 via-amber-500 to-amber-600 bg-clip-text text-transparent">
+    <div 
+      style={{
+        background: 'rgba(17, 24, 39, 0.5)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+      }}
+      className="w-full max-w-2xl mx-auto p-8 rounded-2xl border border-gray-700/30 shadow-2xl"
+    >
+      <h1 
+        style={{
+          background: 'linear-gradient(to right, #fcd34d, #f59e0b, #d97706)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+        }}
+        className="text-4xl font-serif mb-8 text-center"
+      >
         Pre-Order Confirmed!
       </h1>
       
@@ -96,12 +111,18 @@ function PaymentContent() {
         </p>
       </div>
 
-      <Link 
-        href="/" 
-        className="inline-block mt-8 text-lg text-amber-300 px-6 py-3 rounded-full bg-amber-900/20 border border-amber-600/30 transition-colors hover:bg-amber-900/30 hover:text-amber-200"
-      >
-        Return to Homepage
-      </Link>
+      <div className="flex justify-center mt-8">
+        <Link 
+          href="/" 
+          style={{
+            background: 'rgba(146, 64, 14, 0.2)',
+            borderColor: 'rgba(217, 119, 6, 0.3)',
+          }}
+          className="inline-block text-lg text-amber-300 px-6 py-3 rounded-full border transition-colors hover:bg-amber-900/30 hover:text-amber-200"
+        >
+          Return to Homepage
+        </Link>
+      </div>
     </div>
   );
 }
@@ -110,9 +131,14 @@ export default function PaymentSuccessPage() {
   console.log('Payment Success Page rendering');
   
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-black to-gray-900 p-4">
+    <div 
+      style={{
+        background: 'linear-gradient(to bottom, #000000, #111827)',
+      }}
+      className="min-h-screen flex flex-col justify-center items-center p-4"
+    >
       <Suspense fallback={
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-black to-gray-900">
+        <div className="min-h-screen flex items-center justify-center">
           <p className="text-gray-300 text-lg">Loading...</p>
         </div>
       }>

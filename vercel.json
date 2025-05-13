@@ -1,11 +1,18 @@
 {
   "framework": "nextjs",
-  "buildCommand": "NEXT_PUBLIC_BASE_URL=$VERCEL_URL pnpm run build",
+  "buildCommand": "NEXT_PUBLIC_BASE_URL=$VERCEL_URL NODE_ENV=production pnpm run build",
   "installCommand": "pnpm install",
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/next"
+      "use": "@vercel/next",
+      "config": {
+        "postcss": true,
+        "minify": true
+      }
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 } 
