@@ -1,3 +1,11 @@
 {
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "buildCommand": "NEXT_PUBLIC_BASE_URL=$VERCEL_URL pnpm run build",
+  "installCommand": "pnpm install",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ]
 } 
