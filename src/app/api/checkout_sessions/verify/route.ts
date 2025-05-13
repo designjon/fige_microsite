@@ -1,18 +1,19 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-04-30.basil",
+  apiVersion: "2023-10-16",
 });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { session_id } = req.query;
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const session_id = searchParams.get("session_id");
 
-  if (!session_id || typeof session_id !== 'string') {
-    return res.status(400).json({ 
+  if (!session_id) {
+    return NextResponse.json({ 
       success: false,
       message: "Missing session ID." 
-    });
+    }, { status: 400 });
   }
 
   try {
@@ -35,12 +36,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     };
 
-    return res.status(200).json(orderDetails);
+    return NextResponse.json(orderDetails);
   } catch (error: any) {
     console.error("❌ Stripe session fetch failed:", error.message);
-    return res.status(500).json({ 
+    return NextResponse.json({ 
       success: false,
       message: "There was a problem verifying your payment. Please contact support if the charge appears on your statement." 
-    });
+    }, { status: 500 });
   }
-}
+} 
