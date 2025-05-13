@@ -84,7 +84,7 @@ function PaymentContent() {
       
       <div className="space-y-4 text-center">
         <p className="text-gray-300 text-lg">
-          Thank you ({orderDetails.email}) for your order.
+          Thank you <span className="font-bold">{orderDetails.email}</span> for your order.
         </p>
         
         <p className="text-gray-300 text-lg">
@@ -94,13 +94,6 @@ function PaymentContent() {
         <p className="text-gray-300 text-lg">
           Total Paid: ${(orderDetails.amount / 100).toFixed(2)}
         </p>
-      </div>
-
-      <div className="mt-8 p-6 bg-gray-800/50 rounded-xl border border-gray-700/20">
-        <p className="text-gray-400 text-sm mb-3">Your Stripe Session ID:</p>
-        <code className="font-mono text-xs text-gray-300 bg-gray-900/50 p-4 rounded-lg block break-all border border-gray-700/20">
-          {sessionId}
-        </code>
       </div>
 
       <Link 
