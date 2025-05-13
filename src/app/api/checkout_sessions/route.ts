@@ -13,6 +13,15 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2023-10-16",
 });
 
+// Helper function to get the base URL
+function getBaseUrl() {
+  if (process.env.NEXT_PUBLIC_BASE_URL) {
+    return process.env.NEXT_PUBLIC_BASE_URL;
+  }
+  // Fallback for development
+  return 'http://localhost:3000';
+}
+
 export async function POST(req: NextRequest) {
   console.log("➡️ Received POST request to create Stripe session");
 
@@ -22,6 +31,9 @@ export async function POST(req: NextRequest) {
 
     // Create a unique reference ID
     const clientReferenceId = `order_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+
+    const baseUrl = getBaseUrl();
+    console.log("Using base URL:", baseUrl);
 
     const sessionConfig: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ["card"],
@@ -38,8 +50,8 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: "payment" as const,
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/?payment-cancelled=true`,
+      success_url: `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/?payment-cancelled=true`,
       client_reference_id: clientReferenceId,
       metadata: {
         unitId,
