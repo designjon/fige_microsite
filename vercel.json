@@ -1,7 +1,7 @@
 {
   "framework": "nextjs",
   "buildCommand": "NEXT_PUBLIC_BASE_URL=$VERCEL_URL NODE_ENV=production pnpm run build",
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install --no-frozen-lockfile",
   "builds": [
     {
       "src": "package.json",
