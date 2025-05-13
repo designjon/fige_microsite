@@ -3,8 +3,14 @@ import Stripe from "stripe";
 import { cookies } from 'next/headers';
 import { encrypt } from '../../../utils/encryption';
 
+// Log the environment variables (excluding sensitive data)
+console.log("Environment check:", {
+  hasStripeKey: !!process.env.STRIPE_SECRET_KEY,
+  baseUrl: process.env.NEXT_PUBLIC_BASE_URL
+});
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-04-30.basil",
+  apiVersion: "2023-10-16",
 });
 
 export async function POST(req: NextRequest) {
@@ -17,8 +23,7 @@ export async function POST(req: NextRequest) {
     // Create a unique reference ID
     const clientReferenceId = `order_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
 
-    // Create and encrypt the session ID before creating the checkout session
-    const session = await stripe.checkout.sessions.create({
+    const sessionConfig: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ["card"],
       line_items: [
         {
@@ -32,14 +37,24 @@ export async function POST(req: NextRequest) {
           quantity: 1,
         },
       ],
-      mode: "payment",
+      mode: "payment" as const,
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/?payment-cancelled=true`,
       client_reference_id: clientReferenceId,
       metadata: {
         unitId,
       },
+    };
+
+    console.log("Creating session with config:", {
+      ...sessionConfig,
+      success_url: sessionConfig.success_url,
+      cancel_url: sessionConfig.cancel_url
     });
+
+    // Create and encrypt the session ID before creating the checkout session
+    const session = await stripe.checkout.sessions.create(sessionConfig);
+    console.log("✅ Session created successfully:", { sessionId: session.id });
 
     try {
       // Attempt to encrypt and store the session ID in a cookie
@@ -52,6 +67,7 @@ export async function POST(req: NextRequest) {
         maxAge: 3600, // 1 hour
         path: '/'
       });
+      console.log("✅ Cookie set successfully");
     } catch (cookieError) {
       // Log the cookie error but don't fail the request
       console.error("Failed to set cookie:", cookieError);
@@ -60,7 +76,13 @@ export async function POST(req: NextRequest) {
     // Always return the session ID for the redirect
     return Response.json({ sessionId: session.id });
   } catch (error: any) {
-    console.error("🔥 Stripe session creation failed:", error);
+    console.error("🔥 Stripe session creation failed:", {
+      error: error.message,
+      type: error.type,
+      code: error.code,
+      stack: error.stack
+    });
+    
     return new Response(JSON.stringify({ 
       error: "Failed to create checkout session",
       details: error.message 
