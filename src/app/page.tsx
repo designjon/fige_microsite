@@ -75,27 +75,24 @@ const CraftsmanshipSection: React.FC = () => (
           <Image 
             src="/images/art_precision_new_center.jpg" 
             alt="Figé Spinner Standalone" 
-            layout="fill" 
-            objectFit="cover" 
-            className="filter sepia-[.3] saturate-150 hue-rotate-[-10deg] brightness-105 contrast-105 transition-transform duration-500 ease-in-out group-hover:scale-110" 
+            fill
+            className="object-cover filter sepia-[.3] saturate-150 hue-rotate-[-10deg] brightness-105 contrast-105 transition-transform duration-500 ease-in-out group-hover:scale-110" 
           />
         </RevealWrapper>
         <RevealWrapper origin="bottom" delay={400} duration={1000} distance="50px" reset={true} className="bg-gray-800 h-64 rounded-lg shadow-lg overflow-hidden relative group">
           <Image 
             src="/images/art_precision_spinning.jpg" 
             alt="Figé Spinner in Motion" 
-            layout="fill" 
-            objectFit="cover" 
-            className="filter sepia-[.3] saturate-150 hue-rotate-[-10deg] brightness-105 contrast-105 transition-transform duration-500 ease-in-out group-hover:scale-110" 
+            fill
+            className="object-cover filter sepia-[.3] saturate-150 hue-rotate-[-10deg] brightness-105 contrast-105 transition-transform duration-500 ease-in-out group-hover:scale-110" 
           />
         </RevealWrapper>
         <RevealWrapper origin="bottom" delay={500} duration={1000} distance="50px" reset={true} className="bg-gray-800 h-64 rounded-lg shadow-lg overflow-hidden relative group">
           <Image 
             src="/images/art_precision_green_spinner.jpg" 
             alt="Green Figé Spinner Detail" 
-            layout="fill" 
-            objectFit="cover" 
-            className="filter sepia-[.3] saturate-150 hue-rotate-[-10deg] brightness-105 contrast-105 transition-transform duration-500 ease-in-out group-hover:scale-110" 
+            fill
+            className="object-cover filter sepia-[.3] saturate-150 hue-rotate-[-10deg] brightness-105 contrast-105 transition-transform duration-500 ease-in-out group-hover:scale-110" 
           />
         </RevealWrapper>
       </div>
@@ -113,8 +110,8 @@ const AboutTheCreatorSection: React.FC = () => (
             <Image 
               src="/images/creator_photo.jpg" 
               alt="Photo of the Creator" 
-              layout="fill" 
-              objectFit="cover" 
+              fill
+              className="object-cover" 
             />
           </RevealWrapper>
         </div>
@@ -125,7 +122,7 @@ const AboutTheCreatorSection: React.FC = () => (
               Handmade by Jon Friedman, a seasoned product design executive.
             </p>
             <p className="text-lg font-sans mb-4">
-              Years in the making and refined through thousands of iterations, each Figé spinner is hand-assembled in Jon’s home studio—where design, engineering, and elegance converge. Limited to just five numbered pieces, each one is individually etched and comes with a signed certificate of authenticity.
+              Years in the making and refined through thousands of iterations, each Figé spinner is hand-assembled in Jon's home studio—where design, engineering, and elegance converge. Limited to just five numbered pieces, each one is individually etched and comes with a signed certificate of authenticity.
             </p>
             <p className="text-lg font-sans mb-4">
               <a href="https://www.linkedin.com/in/designjon/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
@@ -170,9 +167,8 @@ const MaterialsAndCraftsmanshipSection: React.FC = () => (
             <Image
               src="/images/materials_craftsmanship_new.jpg"
               alt="Figé Spinners with Crafting Tools and Materials"
-              layout="fill"
-              objectFit="cover"
-              className="filter sepia-[.3] saturate-150 hue-rotate-[-10deg] brightness-105 contrast-105 transition-transform duration-500 ease-in-out group-hover:scale-110"
+              fill
+              className="object-cover filter sepia-[.3] saturate-150 hue-rotate-[-10deg] brightness-105 contrast-105 transition-transform duration-500 ease-in-out group-hover:scale-110"
             />
           </RevealWrapper>
         </div>
@@ -192,8 +188,8 @@ const ExperienceSection: React.FC = () => (
         <Image 
           src="/images/executive_presence_new.png" 
           alt="Executive Presence" 
-          layout="fill" 
-          objectFit="cover" 
+          fill
+          className="object-cover" 
         />
       </div>
     </RevealWrapper>
@@ -205,7 +201,7 @@ const GuaranteeSection: React.FC = () => (
     <RevealWrapper origin="bottom" delay={200} duration={1000} distance="50px" reset={true} className="max-w-4xl mx-auto text-center border-t border-b border-gray-700 py-10">
       <h2 className="text-3xl md:text-4xl font-serif text-white mb-6">Lifetime Assurance</h2>
       <p className="text-lg md:text-xl mb-4 font-sans">
-        Figé is built to last. If it ever breaks, we’ll replace it—no questions asked. This is our lifetime guarantee.
+        Figé is built to last. If it ever breaks, we'll replace it—no questions asked. This is our lifetime guarantee.
       </p>
     </RevealWrapper>
   </section>
