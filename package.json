@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.0.0",
+  "engines": {
+    "node": "20.11.1"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -64,6 +67,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230724.0",
     "@types/node": "^20",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18",
