@@ -165,6 +165,9 @@ importers:
         specifier: ^3.24.1
         version: 3.24.2
     devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20230724.0
+        version: 4.20250510.0
       '@types/node':
         specifier: ^20
         version: 20.17.30
@@ -199,6 +202,9 @@ packages:
   '@babel/runtime@7.27.0':
     resolution: {integrity: sha512-VtPOkrdPHZsKc/clNqyi9WUA8TINkZ4cGk63UUE3u4pmB2k+ZMQRDuIOagv8UVd6j7k0T3+RRIb7beKTebNbcw==}
     engines: {node: '>=6.9.0'}
+
+  '@cloudflare/workers-types@4.20250510.0':
+    resolution: {integrity: sha512-VLdSYUooX2QhdlzyBnnLAqa5B3xWyr5vdvya9NZk2BJNmRt2iblSLunj7iBKiW9J+SIBHz7c+kUzUJKoFLKRjg==}
 
   '@emnapi/core@1.4.0':
     resolution: {integrity: sha512-H+N/FqT07NmLmt6OFFtDfwe8PNygprzBikrEMyQfgqSmT0vzE515Pz7R8izwB9q/zsH/MA64AKoul3sA6/CzVg==}
@@ -3054,6 +3060,8 @@ snapshots:
   '@babel/runtime@7.27.0':
     dependencies:
       regenerator-runtime: 0.14.1
+
+  '@cloudflare/workers-types@4.20250510.0': {}
 
   '@emnapi/core@1.4.0':
     dependencies:
