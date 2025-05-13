@@ -1,26 +1,28 @@
 // src/app/payment-success/page.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import React, { Suspense } from "react";
 import styles from './styles.module.css';
 
-console.log('Payment Success Page loading');
+function PaymentSuccessContent() {
+  const { useEffect, useState } = React;
+  const { useSearchParams } = require("next/navigation");
+  const Link = require("next/link").default;
 
-interface OrderDetails {
-  email: string;
-  amount: number;
-  product: string;
-}
+  console.log('Payment Success Page loading');
 
-interface ApiResponse {
-  success: boolean;
-  order?: OrderDetails;
-  message?: string;
-}
+  interface OrderDetails {
+    email: string;
+    amount: number;
+    product: string;
+  }
 
-export default function PaymentSuccessPage() {
+  interface ApiResponse {
+    success: boolean;
+    order?: OrderDetails;
+    message?: string;
+  }
+
   console.log('Payment Success Page rendering');
 
   const searchParams = useSearchParams();
@@ -110,5 +112,19 @@ export default function PaymentSuccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className={styles.mainContainer}>
+        <div className={styles.container}>
+          <p className={styles.text}>Loading payment details...</p>
+        </div>
+      </div>
+    }>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }
