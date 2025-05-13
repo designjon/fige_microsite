@@ -1,7 +1,7 @@
 {
   "framework": "nextjs",
-  "buildCommand": "NEXT_PUBLIC_BASE_URL=$VERCEL_URL NODE_ENV=production pnpm run build",
-  "installCommand": "pnpm install --no-frozen-lockfile",
+  "buildCommand": "corepack enable && pnpm --version && NEXT_PUBLIC_BASE_URL=$VERCEL_URL NODE_ENV=production pnpm run build",
+  "installCommand": "corepack enable && pnpm install --no-frozen-lockfile",
   "builds": [
     {
       "src": "package.json",
@@ -13,6 +13,7 @@
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "PNPM_VERSION": "10.0.0"
   }
 } 
